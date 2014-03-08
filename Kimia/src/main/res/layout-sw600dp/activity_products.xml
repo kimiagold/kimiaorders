@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text=""
+        android:id="@+id/SelectedProductID"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:id="@+id/ProductsList" >
+
+    <fragment
+        android:name="com.kimia.kimia.ProductsListFragment"
+        android:id="@+id/ProductsListFragment"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+
+        <fragment
+            android:name="com.kimia.kimia.ProductViewFragment"
+            android:id="@+id/ProductsViewFragment"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+    </LinearLayout>
+
+</LinearLayout>

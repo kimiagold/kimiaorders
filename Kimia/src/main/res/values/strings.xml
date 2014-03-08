@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name" >Kimia
+    </string>
+    <string name="action_settings" >Settings
+    </string>
+
+    <string name="Accounts" >Accunts</string>
+    <string name="save" >Save</string>
+    <string name="cancel" >Cancel</string>
+    <string name="group" >Group</string>
+    <string name="cod" >Cod</string>
+    <string name="name" >Name</string>
+    <string name="tel" >Tel</string>
+    <string name="mobile" >Mobile</string>
+    <string name="fax" >Fax</string>
+    <string name="preference" >Pre</string>
+    <string name="tip" >tip</string>
+    <string name="visible" >visi</string>
+    <string name="Delete" >Delete</string>
+    <string name="Add" >Add</string>
+    <string name="customer" >customer</string>
+    <string name="maker" >maker</string>
+    <string name="registred" >submit</string>
+    <string name="deleted" >Deleted</string>
+    <string name="error_cod_duplicate" >Duplicate!</string>
+    <string name="error" >Error</string>
+    <string name="error_cod_number" >Number</string>
+    <string name="error_name" >Name is empity</string>
+    <string name="search">Search</string>
+    <string name="Edit">Edit</string>
+    <string name="reset">Reset</string>
+    <string name="Products">Products</string>
+    <string name="Accept">Accept</string>
+    <string name="Null">NULL</string>
+
+
+</resources>

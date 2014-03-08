@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" >کیمیا</string>
+    <string name="action_settings" >تنظیمات</string>
+    <string name="Accounts" >اشخاص</string>
+    <string name="save" >ذخیره</string>
+    <string name="cancel" >انصراف</string>
+    <string name="group" >گروه</string>
+    <string name="cod" >کد</string>
+    <string name="name" >نام</string>
+    <string name="tel" >تلفن</string>
+    <string name="mobile" >موبایل</string>
+    <string name="fax" >نمابر</string>
+    <string name="preference" >الویت</string>
+    <string name="tip" >توضیح</string>
+    <string name="visible" >نمایان</string>
+    <string name="Delete" >حذف</string>
+    <string name="Add" >اضافه</string>
+    <string name="customer" >مشتری</string>
+    <string name="maker" >سازنده</string>
+    <string name="registred" >ثبت شد.</string>
+    <string name="deleted" >حذف شد.</string>
+    <string name="error_cod_duplicate" >کد تکراری است.</string>
+    <string name="error" >خطایی رخ داده است.</string>
+    <string name="error_cod_number" >کد باید عدد باشد.</string>
+    <string name="error_name" >نام نمی‌تواند خالی باشد.</string>
+    <string name="search">جست‌وجو</string>
+    <string name="Edit">اصلاح</string>
+    <string name="reset">دوباره</string>
+    <string name="Products">اجناس</string>
+    <string name="Accept">تایید</string>
+    <string name="Null">هیچی</string>
+
+
+
+
+
+</resources>

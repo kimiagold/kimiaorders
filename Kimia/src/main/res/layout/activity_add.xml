@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c5c5c5">
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="false"
+        android:background="#ffffff">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/group"
+                android:id="@+id/textgroup"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/spinnergroup"
+                android:layout_marginRight="20dp"/>
+
+            <Spinner
+                android:id="@+id/spinnergroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawSelectorOnTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_alignRight="@+id/editname"
+                android:gravity="right"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cod"
+                android:id="@+id/textcod"
+                android:layout_alignRight="@+id/textfax"
+                android:layout_alignBottom="@+id/editcod"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editcod"
+                android:ems="10"
+                android:inputType="number"
+                android:hint="@string/cod"
+                android:layout_below="@+id/editfax"
+                android:layout_alignLeft="@+id/editfax"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:id="@+id/textname"
+                android:layout_alignRight="@+id/textgroup"
+                android:layout_alignBottom="@+id/editname"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editname"
+                android:ems="10"
+                android:hint="@string/name"
+                android:layout_below="@+id/spinnergroup"
+                android:layout_marginLeft="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tel"
+                android:id="@+id/texttel"
+                android:layout_alignRight="@+id/textpre"
+                android:layout_alignBottom="@+id/edittel"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/tel"
+                android:inputType="number"
+                android:id="@+id/edittel"
+                android:layout_alignLeft="@+id/editname"
+                android:layout_below="@+id/switchpre"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mobile"
+                android:id="@+id/textmob"
+
+                android:layout_alignRight="@+id/texttel"
+                android:layout_alignBottom="@+id/editmob"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mobile"
+                android:id="@+id/ds"
+                android:layout_alignRight="@+id/texttel"
+                android:layout_alignBottom="@+id/editmob"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editmob"
+                android:ems="10"
+                android:hint="@string/mobile"
+                android:inputType="number"
+                android:layout_below="@+id/edittel"
+                android:layout_alignLeft="@+id/edittel"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fax"
+                android:id="@+id/textfax"
+                android:layout_alignRight="@+id/textmob"
+                android:layout_alignBottom="@+id/editfax"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editfax"
+                android:ems="10"
+                android:hint="@string/fax"
+                android:inputType="number"
+                android:layout_alignLeft="@+id/editmob"
+                android:layout_below="@+id/editmob"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/preference"
+                android:id="@+id/textpre"
+                android:layout_alignRight="@+id/textname"
+                android:layout_alignBottom="@+id/switchpre"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switchpre"
+                android:layout_below="@+id/editname"
+                android:layout_alignRight="@+id/editname"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tip"
+                android:id="@+id/texttip"
+                android:layout_alignRight="@+id/textcod"
+                android:layout_alignBottom="@+id/edittip"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/tip"
+                android:id="@+id/edittip"
+                android:layout_below="@+id/editcod"
+                android:layout_alignLeft="@+id/editcod"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/visible"
+                android:id="@+id/textvis"
+                android:layout_alignRight="@+id/texttip"
+                android:layout_alignBottom="@+id/switchevis"/>
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switchevis"
+                android:layout_below="@+id/edittip"
+                android:layout_alignRight="@+id/edittip"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+</RelativeLayout>
