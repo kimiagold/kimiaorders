@@ -15,11 +15,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-/**
- * Created by behdad on 2/10/14.
- */
 
 public class AddActivity extends Activity implements CompoundButton.OnCheckedChangeListener {
 
@@ -36,10 +31,8 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
     Switch s1;
     Switch s2;
 
-
     ArrayList<String> group =new ArrayList<String>();
     Spinner groupS;
-
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -55,8 +48,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         s2 = (Switch) findViewById(R.id.switchevis);
         group.add(getString(R.string.customer));
         group.add(getString(R.string.maker));
-
-
 
         DBAdapter db = new DBAdapter(this);
         db.open();
@@ -80,11 +71,8 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
             }
         });
 
-
-
         cod.setText(Integer.toString(m+1));
         db.close();
-
 
         if (s1 != null) {
             s1.setOnCheckedChangeListener(this);
@@ -133,16 +121,7 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         return true;
     }
 
-
-
-
-
-
-
-
  //   private static final String ALLOWED_CHARACTERS ="ضصثقفغعهخحجچگکمنتالبیسشظطزرذدپو.qwertyuiopasdfghjklzxcvbnm";
-
-
    /* public static String random() {
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
@@ -156,8 +135,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
     }
 */
 
-
-
   //  private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
 
    /* private static String getRandomString(final int sizeOfRandomString)
@@ -168,27 +145,18 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
     }
-
-
 */
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
             case R.id.action_save:
-
-
                 String na=name.getText().toString();
                 String te=tel.getText().toString();
                 String mo=mob.getText().toString();
                 String fa=fax.getText().toString();
                 String ti=tip.getText().toString();
-
-
 
                 int co;
 
@@ -199,16 +167,10 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
                     co=-1;
                 }
 
-
-
-
-
                 DBAdapter db = new DBAdapter(this);
                 db.open();
 
                 long id;
-
-
 
                 if (na != null && !na.isEmpty()){
 
@@ -226,7 +188,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
 
                         else
                             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
-
                     }
 
                     else
@@ -236,31 +197,11 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
                 else
                     Toast.makeText(this, getString(R.string.error_name), Toast.LENGTH_SHORT).show();
 
-
-
-
-
                 break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             case R.id.action_cancel:
                 finish();
                 break;
-
 
             default:
                 break;
@@ -270,8 +211,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
     }
 
     public void save(View View){
-
-
 
         String na=name.getText().toString();
         String te=tel.getText().toString();
@@ -320,9 +259,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
             Toast.makeText(this, getString(R.string.error_name), Toast.LENGTH_SHORT).show();
     }
 
-
-
-
     public void reset(){
         name.setText("");
         tel.setText("");
@@ -339,7 +275,6 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         int m=db.MaxCod();
         cod.setText(Integer.toString(m+1));
         db.close();
-
     }
 
     public void cancel(View View){

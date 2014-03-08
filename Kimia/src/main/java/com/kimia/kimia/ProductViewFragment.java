@@ -86,8 +86,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textCod.setOnFocusChangeListener(this);
         textTip.setOnFocusChangeListener(this);
 
-
-
         db = new DBAdapter(getActivity());
         context = getActivity();
 
@@ -142,8 +140,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             case r.id.editText1:
                 break;
 
-
-
         if (view == getActivity().findViewById(R.id.ProductEditMaker) && b == true){
             listViewMaker.setVisibility(View.VISIBLE);
             showAccountsList();
@@ -176,33 +172,17 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         }
 
         db.open();
-
-        Cursor m = db.getProduct(4);
-
-   //     maker = db.getMaker(makerID);
-     //   textMaker.setText(maker);
         Cursor c=db.getProduct(selectedProductID);
 
         if(c != null && c.moveToFirst()){
-
-         //   groupsID = Integer.parseInt(c.getString(0));
-           // makerID = Integer.parseInt(c.getString(2));
             textGroup.setText(c.getString(5));
             textName.setText(c.getString(0));
             textMaker.setText(c.getString(4));
             textCod.setText(c.getString(1));
             textTip.setText(c.getString(2));
         }
+
         db.close();
-
-      //  db.open();
-
-//            groups = db.getProductsGroupName(groupsID);
-        //          textGroup.setText(groups);
-
-
-
-        //db.close();
     }
 
     /**************************************************Add product*********************************/
@@ -220,8 +200,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
         groupsID = db.getProductsGroupID(groups);
         makerID = db.getAccountsNameID(maker);
-
-
 
         if (groupsID < 0){
             groupsID = (int) db.insertProductsGroup(groups);
@@ -339,4 +317,3 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
         listViewMaker.setLayoutParams(list);
     }*/
-

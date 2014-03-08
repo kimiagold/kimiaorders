@@ -4,26 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-
 
 public class MainActivity extends Activity{
-
-
-    private static final String[] COUNTRIES = new String[] {
-            "Belgium", "France", "Italy", "Germany", "Spain"
-    };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
 
-
-        // In the onCreate method
-        // In the onCreate method
        /* forceRTLIfSupported();
         super.onCreate(savedInstanceState);
         String languageToLoad  = "fa";
@@ -34,20 +22,7 @@ public class MainActivity extends Activity{
         getBaseContext().getResources().updateConfiguration(config,getBaseContext().getResources().getDisplayMetrics());
 */
         setContentView(R.layout.activity_main);
-
-
-        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.actv_country);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, COUNTRIES);
-        textView.setAdapter(adapter);
     }
-
-  /*  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void forceRTLIfSupported()
-    {
-     //   if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
-            getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-      //  }
-    }*/
 
     public void AccountsClick(View view){
         startActivity(new Intent("com.kimia.kimia.AccuntActivity"));
@@ -66,68 +41,3 @@ public class MainActivity extends Activity{
     }
 */
 }
-/*
-import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-
-public class MainActivity extends Activity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
-
-}
-*/

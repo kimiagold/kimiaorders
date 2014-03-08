@@ -14,17 +14,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
-
-/**
- * Created by behdad on 2/10/14.
- */
-
 public class EditActivity extends Activity implements CompoundButton.OnCheckedChangeListener {
-
-
     EditText name;
     EditText tel;
     EditText mob;
@@ -37,47 +29,10 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
     boolean vi;
     int ID;
     int groupI;
-
     ArrayList<String> group =new ArrayList<String>();
-
     Spinner groupS;
 
-  /*  @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState){
-
-
-   /*     Bundle arguments = getArguments();
-        if (arguments != null)
-        {
-            int idd;
-            idd = arguments.getInt("IDD");
-            // then you have arguments
-
-            ID = idd;
-            //   ID=10;
-        }
-        //  Bundle bundle = this.getArguments();
-        //if(getArguments()!=null){
-        //ID = bundle.getInt("ID", 20);
-
-        group.add(getString(R.string.customer));
-        group.add(getString(R.string.maker));
-
-//        Bundle extras = getActivity().getIntent().getExtras();
-        //      if (extras != null) {
-        //        ID = extras.getInt("ID");
-        //  }
-        return inflater.inflate(R.layout.activity_usershow, container, false);
-    }*/
-
-
-   /* void setMessage(String msg){
-        ID = Integer.parseInt(msg);
-        onStart();
-    }*/
-
     @Override
-    //   public void onStart(){
 
     public void onCreate(Bundle savedInstanceState){
 
@@ -88,8 +43,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         if (extras != null) {
             ID = Integer.parseInt(extras.getString("ID"));
         }
-        //     super.onStart();
-        //   getActivity().setContentView(R.layout.activity_usershow);
 
         name = (EditText) findViewById(R.id.editname);
         tel = (EditText) findViewById(R.id.edittel);
@@ -100,14 +53,10 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         visi = (Switch) findViewById(R.id.switchevis);
         pre = (Switch) findViewById(R.id.switchpre);
 
-
-
         DBAdapter db = new DBAdapter(this);
         db.open();
         Cursor c=db.getAc(ID);
         if(c != null && c.moveToFirst()){
-
-
             groupS =(Spinner)findViewById(R.id.spinnergroup);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, group);
             groupS.setAdapter(adapter);
@@ -126,9 +75,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
             if(c.getString(9).equals("1"))
                 visi.setChecked(true);
 
-
-
-
             groupS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -140,29 +86,21 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
                 }
             });
 
-
-
             pre.setOnCheckedChangeListener(this);
             visi.setOnCheckedChangeListener(this);
-
-
         }
         db.close();
-
     }
-
-
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int temp=buttonView.getId();
 
         switch (temp){
-
             case R.id.switchpre:
-
                 if(isChecked) {
                     pr = true;
                 }
+
                 else {
                     pr = false;
                 }
@@ -182,7 +120,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -190,7 +127,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         return true;
     }
 
-    //NEW
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -284,8 +220,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         else
             Toast.makeText(this,getString(R.string.error),
                     Toast.LENGTH_SHORT).show();
-
-
     }
 
     public void delete(View View){
@@ -301,9 +235,6 @@ public class EditActivity extends Activity implements CompoundButton.OnCheckedCh
         else
             Toast.makeText(this,getString(R.string.error),
                     Toast.LENGTH_SHORT).show();
-
-
-
         db.close();
         finish();
     }

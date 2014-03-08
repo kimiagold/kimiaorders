@@ -1,9 +1,5 @@
 package com.kimia.kimia;
 
-/**
- * Created by behdad on 2/10/14.
- */
-
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -20,11 +16,7 @@ import android.widget.*;
 
 import java.util.ArrayList;
 
-/**
- * Created by behdad on 1/23/14.
- */
 public class UsershowActivity extends Fragment implements CompoundButton.OnCheckedChangeListener {
-
 
     TextView name;
     TextView tel;
@@ -38,52 +30,20 @@ public class UsershowActivity extends Fragment implements CompoundButton.OnCheck
     boolean vi;
     int ID;
     int groupI;
-    String ddd;
-
     TextView id;
-
     ArrayList<String> group =new ArrayList<String>();
-
     Spinner groupS;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState){
 
-        // id = (TextView) getActivity().findViewById(R.id.ID);
-
-
-//ID = 24;
-        //  ddd = id.getText().toString();
-
-  /*
-
-        Bundle arguments = getArguments();
-        if (arguments != null)
-        {
-int idd;
-             idd = arguments.getInt("IDD");
-            // then you have arguments
-
-            ID = idd;
-         //   ID=10;
-        }*/
-        //  Bundle bundle = this.getArguments();
-        //if(getArguments()!=null){
-        //ID = bundle.getInt("ID", 20);
-
         group.add(getString(R.string.customer));
         group.add(getString(R.string.maker));
 
-//        Bundle extras = getActivity().getIntent().getExtras();
-        //      if (extras != null) {
-        //        ID = extras.getInt("ID");
-        //  }
         return inflater.inflate(R.layout.activity_usershow, container, false);
     }
 
     void setMessage(){
-        //   getActivity().setContentView(R.layout.activity_usershow);
-
         name = (TextView) getActivity().findViewById(R.id.editname);
         tel = (TextView) getActivity().findViewById(R.id.edittel);
         mob = (EditText) getActivity().findViewById(R.id.editmob);
@@ -92,27 +52,19 @@ int idd;
         tip = (TextView) getActivity().findViewById(R.id.edittip);
         visi = (Switch) getActivity().findViewById(R.id.switchevis);
         pre = (Switch) getActivity().findViewById(R.id.switchpre);
-
-
         id = (TextView) getActivity().findViewById(R.id.ID);
 
-
-        //   ID = 24;
         try{
-        ID = Integer.parseInt(id.getText().toString());
+            ID = Integer.parseInt(id.getText().toString());
         }
-        catch(NumberFormatException e)
-        {
+        catch(NumberFormatException e){
            ID = 0;
         }
-
 
         DBAdapter db = new DBAdapter(getActivity());
         db.open();
         Cursor c=db.getAc(ID);
         if(c != null && c.moveToFirst()){
-
-
             groupS =(Spinner)getActivity().findViewById(R.id.spinnergroup);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, group);
             groupS.setAdapter(adapter);
@@ -131,9 +83,6 @@ int idd;
             if(c.getString(9).equals("1"))
                 visi.setChecked(true);
 
-
-
-
             groupS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -145,26 +94,16 @@ int idd;
                 }
             });
 
-
-
             pre.setOnCheckedChangeListener(this);
             visi.setOnCheckedChangeListener(this);
-
-
         }
         db.close();
     }
 
     @Override
     public void onStart(){
-
-
         super.onStart();
-
-
     }
-
-
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         int temp=buttonView.getId();
@@ -232,8 +171,6 @@ int idd;
         else
             Toast.makeText(getActivity(),getString(R.string.error),
                     Toast.LENGTH_SHORT).show();
-
-
     }
 
     public void delete(View View){
@@ -249,8 +186,6 @@ int idd;
         else
             Toast.makeText(getActivity(),getString(R.string.error),
                     Toast.LENGTH_SHORT).show();
-
-
 
     db.close();
         getActivity().finish();

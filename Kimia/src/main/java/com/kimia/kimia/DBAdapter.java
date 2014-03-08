@@ -297,14 +297,6 @@ public class DBAdapter {
         cursor = db.rawQuery("SELECT " + AccountID + " , " + AccountName + " FROM "
                 + Accounts + " WHERE " + AccountGroupID + " = 1 AND " + AccountName + " LIKE "
                 + "'%" + filter + "%';", null);
-
-
-      /*  cursor = db.query(
-                true, Accounts,
-                new String[] {AccountID, AccountName},
-                AccountName + " LIKE ?",
-                new String[] {"%" + filter + "%"},
-                null, null, AccountName, null);*/
         return cursor;
     }
 
@@ -328,9 +320,6 @@ public class DBAdapter {
         return db.delete(Accounts, AccountID + "=" + rowId, null)> 0;
     }
 
-   // public Cursor getALLac(){
-   //     return db.query(Accounts ,new String[]{AccountID,AccountName,AccountGroupID,AccountCode ,AccountTelephone, AccountMobile, AccountFax, AccountTip, AccountVisible, AccountPreference},null ,null,null,null,AccountName);
-   // }
 
     public Cursor getALLacname(){
         cursor = db.query(Accounts,new String[]{AccountID,AccountName},null ,null,null,null,AccountName);
@@ -418,7 +407,6 @@ public class DBAdapter {
         return cursor;
     }
 
-
     /************************************************Get Products Group Name***********************/
 
     public String getProductsGroupName(long rowId) throws SQLException{
@@ -456,28 +444,6 @@ public class DBAdapter {
         initialValues.put(AccountTip, tip);
         initialValues.put(AccountCode, cod);
         initialValues.put(AccountVisible, isvisi);
-        //  return db.update(DATABASE_TABLE,initialValues,KEY_ID + "=" + rowId, null) > 0;
-        // return ContentUris.withAppendedId( Uri.EMPTY,id);
         return (long) db.updateWithOnConflict(Accounts,initialValues,AccountID + "=" + rowId,null, SQLiteDatabase.CONFLICT_IGNORE);
-        // }
-
-        //  try {
-        //   boolean n;
-
-        //     db.update(DATABASE_TABLE,initialValues,KEY_ID + "=" + rowId, null) > 0;
-        //  if (n=true)
-        //      return 1;
-        //    return db.insertOrThrow(DATABASE_TABLE,null,initialValues);
-        //   return db.updateWithOnConflict(DATABASE_TABLE, initialValues, KEY_ID + "=" + rowId, null, SQLiteDatabase.CONFLICT_IGNORE);
-        // db.upd
-
-        // } catch (Exception e) {
-        //    if ( e.getMessage().toString().equals("column Code is not unique (code 19)"))
-        //        return -2;
-
-        //  else
-        //      return -3;
-        //  }
-        //   return 2;
     }
 }
