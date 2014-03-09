@@ -246,7 +246,7 @@ public class DBAdapter {
 
     /**************************************************Insert Product******************************/
 
-    public long insertProduct(int code, int groupsID, String name, int maker, boolean visible, String tip){
+    public long insertProduct(long code, long groupsID, String name, long maker, boolean visible, String tip){
         ContentValues initialValues = new ContentValues();
         initialValues.put(ProductCode, code);
         initialValues.put(ProductGroupsID, groupsID);
@@ -303,14 +303,17 @@ public class DBAdapter {
     /********************************************************Insert Product Group*******************/
 
     public long insertProductsGroup(String name){
+        long a;
         ContentValues initialValues = new ContentValues();
         initialValues.put(ProductGroupName, name);
 
         try {
-            return db.insert(ProductGroups, null, initialValues);
+            a = db.insert(ProductGroups, null, initialValues);
         } catch (Exception e) {
-            return -1;
+            a = -1;
         }
+
+        return a;
     }
 
     /**********************************************************************************************/
@@ -319,6 +322,14 @@ public class DBAdapter {
     public boolean deleteAc(long rowId){
         return db.delete(Accounts, AccountID + "=" + rowId, null)> 0;
     }
+
+    /***************************************************Delete Product*****************************/
+
+    public boolean deleteProduct(long ID){
+        return db.delete(Products, ProductID + " = " + ID, null) > 0;
+    }
+
+    /**********************************************************************************************/
 
 
     public Cursor getALLacname(){

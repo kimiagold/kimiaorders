@@ -13,12 +13,12 @@ import android.widget.TextView;
 
 public class ProductsListFragment extends Fragment {
 
-    ProductViewFragment productViewFragment;
     ListView listView;
     Cursor cursor;
     ListAdapter listAdapter;
     Context context;
     private TextView textSelectedProductID;
+    int i=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -43,10 +43,17 @@ public class ProductsListFragment extends Fragment {
         cursor = db.getAllProductName();
 
         if(cursor != null && cursor.moveToFirst()){
-            listAdapter = new ListAdapter(getActivity(), cursor);
-            listView.setFastScrollAlwaysVisible(true);
-            listView.setAdapter(listAdapter);
+            textSelectedProductID.setText(cursor.getString(0));
         }
+
+        else {
+            textSelectedProductID.setText("0");
+            ((ProductsActivity)getActivity()).setFragmentWeightEdit(true);
+        }
+
+        listAdapter = new ListAdapter(getActivity(), cursor);
+        listView.setFastScrollAlwaysVisible(true);
+        listView.setAdapter(listAdapter);
 
         db.close();
 
@@ -59,8 +66,6 @@ public class ProductsListFragment extends Fragment {
                 ID=textViewId.getText().toString();
                 textSelectedProductID.setText(ID);
                 ((ProductsActivity)getActivity()).setView();
-                productViewFragment = (ProductViewFragment) getFragmentManager().findFragmentById(R.id.ProductsViewFragment);
-                productViewFragment.showProduct();
             }
         });
     }

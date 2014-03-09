@@ -30,9 +30,9 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private String tip;
     private String maker;
 
-    private int cod;
-    private int groupsID;
-    private int makerID;
+    private long cod;
+    private long groupsID;
+    private long makerID;
     //private ListView listViewProductGroup;
     //private ListView listViewMaker;
     private Cursor cursor;
@@ -89,11 +89,11 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         db = new DBAdapter(getActivity());
         context = getActivity();
 
+        checkEdit();
         //listViewProductGroup = (ListView) getActivity().findViewById(R.id.Product_ListGroup);
         //listViewMaker = (ListView) getActivity().findViewById(R.id.Product_ListMaker);
 
         textMaker.addTextChangedListener(new TextWatcher() {
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 showMakersList();
@@ -101,12 +101,10 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 
@@ -127,6 +125,45 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             }
         });
+    }
+
+
+
+   /* public void setstart(){
+        if (getActivity() != null) {
+            textGroup = (AutoCompleteTextView) getActivity().findViewById(R.id.ProductEditGroupID);
+            textMaker = (AutoCompleteTextView) getActivity().findViewById(R.id.ProductEditMaker);
+
+            textName = (EditText) getActivity().findViewById(R.id.ProductEditName);
+            textCod = (EditText) getActivity().findViewById(R.id.ProductEditCod);
+            textTip = (EditText) getActivity().findViewById(R.id.ProductEditTip);
+            textSelectedProductID = (TextView) getActivity().findViewById(R.id.SelectedProductID);
+        }
+
+        textGroup.setOnFocusChangeListener(this);
+        textName.setOnFocusChangeListener(this);
+        textMaker.setOnFocusChangeListener(this);
+        textCod.setOnFocusChangeListener(this);
+        textTip.setOnFocusChangeListener(this);
+
+        db = new DBAdapter(getActivity());
+        context = getActivity();
+    }*/
+
+    /********************************************Check Edit****************************************/
+
+    public void checkEdit(){
+        try {
+            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
+        }
+        catch(Exception e) {
+            selectedProductID = 0;
+        }
+
+        if (selectedProductID > 0)
+            showProduct();
+
+        else resetForAdd();
     }
 
     /******************************************On focus Change*************************************/
@@ -161,12 +198,12 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Show Product********************************/
 
-    public void showProduct(){
+    private void showProduct(){
 
         try{
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
         }
-        catch(NumberFormatException e)
+        catch(Exception e)
         {
             selectedProductID = 0;
         }
@@ -200,18 +237,18 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
         groupsID = db.getProductsGroupID(groups);
         makerID = db.getAccountsNameID(maker);
-
+long groupsIDfff = 0;
         if (groupsID < 0){
-            groupsID = (int) db.insertProductsGroup(groups);
+            groupsIDfff = db.insertProductsGroup(groups);
         }
 
         if (makerID < 0 ){
             int makerCod = db.MaxCod();
-            makerID = (int) db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
+            makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
         }
 
         long id;
-        id = db.insertProduct(cod, groupsID, name, makerID, true, tip);
+        id = db.insertProduct(cod, groupsIDfff, name, makerID, true, tip);
         db.close();
 
         if (id>0){
@@ -236,7 +273,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Show Accounts List*****8********************/
 
-    public void showMakersList() {
+    private void showMakersList() {
 
         db.open();
         super.onResume();
@@ -262,7 +299,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Show Products Group List********************/
 
-    public void showProductsGroupList(){
+    private void showProductsGroupList(){
 
         db.open();
         super.onResume();

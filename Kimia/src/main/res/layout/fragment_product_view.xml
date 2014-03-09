@@ -44,6 +44,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditGroupID"
+                android:selectAllOnFocus="true"
                 android:textSize="25sp" />
 
             <EditText
@@ -56,19 +57,10 @@
                 android:ems="5"
                 android:gravity="start"
                 android:paddingStart="20dp"
+                android:selectAllOnFocus="true"
                 android:enabled="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true" />
-
-            <ListView
-                android:id="@+id/Product_ListGroup"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:choiceMode="singleChoice"
-                android:listSelector="@android:color/holo_blue_bright"
-                android:background="#ccc"
-                android:layout_columnSpan="2"
-                android:fastScrollEnabled="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -87,17 +79,8 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditMaker"
+                android:selectAllOnFocus="true"
                 android:textSize="25sp" />
-
-            <ListView
-                    android:id="@+id/Product_ListMaker"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
-                    android:choiceMode="singleChoice"
-                    android:listSelector="@android:color/holo_blue_bright"
-                    android:background="#ccc"
-                    android:layout_columnSpan="2"/>
-
 
 
             <TextView
@@ -136,6 +119,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:gravity="start"
+                android:selectAllOnFocus="true"
                 android:paddingStart="20dp"
                 android:paddingEnd="10dp" />
 
@@ -149,6 +133,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="start"
                 android:paddingStart="20dp"
+                android:selectAllOnFocus="true"
                 android:clickable="false"
                 android:focusable="true"
                 android:focusableInTouchMode="true"/>

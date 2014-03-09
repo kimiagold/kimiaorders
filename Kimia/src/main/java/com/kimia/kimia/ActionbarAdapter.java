@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+
 ////
 public class ActionbarAdapter extends Activity{
 
@@ -12,6 +14,9 @@ public class ActionbarAdapter extends Activity{
     private MenuItem itemDelete;
     private MenuItem itemAccept;
     private MenuItem itemCancel;
+
+    private TextView textSelectedProductID;
+    private int selectedProductID;
 
     @Override
     public boolean onCreateOptionsMenu(Menu Menu) {
@@ -25,30 +30,44 @@ public class ActionbarAdapter extends Activity{
         itemAccept = Menu.findItem(R.id.ItemAccept);
         itemCancel = Menu.findItem(R.id.ItemCancel);
 
-        itemAccept.setVisible(false);
-        itemCancel.setVisible(false);
+        textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
+
+        try {
+            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
+        }
+        catch(Exception e){
+            selectedProductID = 0;
+        }
+
+        if (selectedProductID > 0)
+            actionbarSetView();
+        else actionbarSetEdit();
 
         return true;
     }
 
     public boolean actionbarSetEdit(){
 
-        itemAdd.setVisible(false);
-        itemEdit.setVisible(false);
-        itemDelete.setVisible(false);
-        itemAccept.setVisible(true);
-        itemCancel.setVisible(true);
+        if (itemAccept!=null){
+            itemAdd.setVisible(false);
+            itemEdit.setVisible(false);
+            itemDelete.setVisible(false);
+            itemAccept.setVisible(true);
+            itemCancel.setVisible(true);
+        }
 
         return true;
     }
 
     public boolean actionbarSetView(){
 
-        itemAdd.setVisible(true);
-        itemEdit.setVisible(true);
-        itemDelete.setVisible(true);
-        itemAccept.setVisible(false);
-        itemCancel.setVisible(false);
+        if (itemAccept!=null){
+            itemAdd.setVisible(true);
+            itemEdit.setVisible(true);
+            itemDelete.setVisible(true);
+            itemAccept.setVisible(false);
+            itemCancel.setVisible(false);
+        }
 
         return true;
     }
