@@ -18,6 +18,7 @@ public class ProductsListFragment extends Fragment {
     ListAdapter listAdapter;
     Context context;
     private TextView textSelectedProductID;
+    DBAdapter db;
     int i=0;
 
     @Override
@@ -28,13 +29,8 @@ public class ProductsListFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        showList();
-    }
-
-    public void showList() {
-
         textSelectedProductID = (TextView) getActivity().findViewById(R.id.SelectedProductID);
-        DBAdapter db = new DBAdapter(getActivity());
+        db = new DBAdapter(getActivity());
         context = getActivity();
         listView = (ListView) getActivity().findViewById(R.id.listView);
 
@@ -44,12 +40,19 @@ public class ProductsListFragment extends Fragment {
 
         if(cursor != null && cursor.moveToFirst()){
             textSelectedProductID.setText(cursor.getString(0));
-        }
-
-        else {
+        } else {
             textSelectedProductID.setText("0");
             ((ProductsActivity)getActivity()).setFragmentWeightEdit(true);
         }
+
+        showList();
+    }
+
+    public void showList() {
+
+        db.open();
+        super.onResume();
+        cursor = db.getAllProductName();
 
         listAdapter = new ListAdapter(getActivity(), cursor);
         listView.setFastScrollAlwaysVisible(true);

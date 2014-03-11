@@ -61,8 +61,9 @@ public class ProductsActivity extends ActionbarAdapter {
             v.clearFocus();
         }
 
-        productsListFragment.showList();
         productViewFragment.checkEdit();
+        productsListFragment.showList();
+
 
         try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
@@ -116,8 +117,10 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemAccept:
-                productViewFragment.addProduct();
-                setView();
+                if (productViewFragment.addProduct()){
+                    productsListFragment.showList();
+                    setView();
+                }
                 break;
 
             case R.id.ItemCancel:

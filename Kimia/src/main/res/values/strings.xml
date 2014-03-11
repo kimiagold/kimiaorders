@@ -24,16 +24,17 @@
     <string name="maker" >maker</string>
     <string name="registred" >submit</string>
     <string name="deleted" >Deleted</string>
-    <string name="error_cod_duplicate" >Duplicate!</string>
+    <string name="error_cod_duplicate" >Cod id duplicate!</string>
     <string name="error" >Error</string>
     <string name="error_cod_number" >Number</string>
-    <string name="error_name" >Name is empity</string>
+    <string name="error_name" >Name is empty</string>
     <string name="search">Search</string>
     <string name="Edit">Edit</string>
     <string name="reset">Reset</string>
     <string name="Products">Products</string>
     <string name="Accept">Accept</string>
     <string name="Null">NULL</string>
+    <string name="is_empty">is empty</string>
 
 
 </resources>

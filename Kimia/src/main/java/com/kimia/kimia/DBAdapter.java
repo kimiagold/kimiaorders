@@ -209,8 +209,8 @@ public class DBAdapter {
         DBHelper.close();
     }
 
-    public int MaxCod() {
-        int Max=0;
+    public long MaxCod() {
+        long Max=0;
         Cursor m;
         m = db.rawQuery("SELECT MAX(" + AccountCode + ") FROM " + Accounts , null);
 
@@ -222,7 +222,7 @@ public class DBAdapter {
         return Max;
     }
 
-    public long insertAc(int grupId, int cod, String accNA, String tel, String mob, String fax, boolean ispre, String tip,boolean isvisi ){
+    public long insertAc(long grupId, long cod, String accNA, String tel, String mob, String fax, boolean ispre, String tip,boolean isvisi ){
         ContentValues initialValues = new ContentValues();
         initialValues.put(AccountGroupID, grupId);
         initialValues.put(AccountCode, cod);
@@ -233,15 +233,18 @@ public class DBAdapter {
         initialValues.put(AccountPreference, ispre);
         initialValues.put(AccountTip, tip);
         initialValues.put(AccountVisible, isvisi);
+        long a;
 
         try {
-            return db.insertOrThrow(Accounts ,null,initialValues);
+            a = db.insertOrThrow(Accounts ,null,initialValues);
         } catch (Exception e) {
-            if (e.getMessage().equals("column" + AccountCode + "  is not unique (code 19)"))
-                return -2;
+            if (e.getMessage().equals("column" + AccountCode + " is not unique (code 19)"))
+                a=-2;
             else
-                return -3;
+                a=-3;
         }
+
+        return a;
     }
 
     /**************************************************Insert Product******************************/
@@ -255,17 +258,23 @@ public class DBAdapter {
         initialValues.put(ProductIsVisible, visible);
         initialValues.put(ProductTip, tip);
 
+        long a;
+
         try {
-            return db.insertOrThrow(Products, null, initialValues);
+            a = db.insertOrThrow(Products, null, initialValues);
         } catch (Exception e) {
-            return -2;
+            if (e.getMessage().equals("column " + ProductCode + " is not unique (code 19)"))
+                a=-2;
+            else
+                a=-3;
         }
+        return a;
     }
 
     /****************************************************Product Max Cod***************************/
 
-    public int ProductMaxCod() {
-        int Max=0;
+    public long ProductMaxCod() {
+        long Max=0;
         Cursor m;
         m = db.rawQuery("SELECT MAX(" + ProductCode + ") FROM " + Products , null);
 
@@ -302,13 +311,13 @@ public class DBAdapter {
 
     /********************************************************Insert Product Group*******************/
 
-    public long insertProductsGroup(String name){
-        long a;
+    public int insertProductsGroup(String name){
+        int a=0;
         ContentValues initialValues = new ContentValues();
         initialValues.put(ProductGroupName, name);
 
         try {
-            a = db.insert(ProductGroups, null, initialValues);
+            a = (int) db.insert(ProductGroups, null, initialValues);
         } catch (Exception e) {
             a = -1;
         }

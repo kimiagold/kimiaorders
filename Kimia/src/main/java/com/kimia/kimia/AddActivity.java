@@ -52,13 +52,13 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         DBAdapter db = new DBAdapter(this);
         db.open();
 
-        int m=db.MaxCod();
-        int g=db.lastUser();
+        long m=db.MaxCod();
+        long g=db.lastUser();
 
         groupS =(Spinner)findViewById(R.id.spinnergroup);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, group);
         groupS.setAdapter(adapter);
-        groupS.setSelection(g);
+        groupS.setSelection((int) g);
 
         groupS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -71,7 +71,7 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
             }
         });
 
-        cod.setText(Integer.toString(m+1));
+        cod.setText(Integer.toString((int) m+1));
         db.close();
 
         if (s1 != null) {
@@ -272,8 +272,8 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
 
         DBAdapter db = new DBAdapter(this);
         db.open();
-        int m=db.MaxCod();
-        cod.setText(Integer.toString(m+1));
+        long m=db.MaxCod();
+        cod.setText(Long.toString (m+1));
         db.close();
     }
 
@@ -281,5 +281,3 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         finish();
     }
 }
-
-//test1

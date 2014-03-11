@@ -30,7 +30,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private String tip;
     private String maker;
 
-    private long cod;
+    private String cod;
     private long groupsID;
     private long makerID;
     //private ListView listViewProductGroup;
@@ -41,7 +41,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private DBAdapter db;
     private boolean visible;
 
-    private int selectedProductID;
+    private long selectedProductID;
     private TextView textSelectedProductID;
     private ProductsActivity productsActivity;
 
@@ -122,6 +122,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             @Override
             public void afterTextChanged(Editable s) {
+              //  validate(textView, text);
 
             }
         });
@@ -170,7 +171,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     @Override
     public void onFocusChange(View view, boolean b) {
-//        productsActivity.setEdit();
+        productsActivity.setEdit();
 
         /*
         switch(v.getId()){
@@ -203,8 +204,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         try{
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             selectedProductID = 0;
         }
 
@@ -224,36 +224,63 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Add product*********************************/
 
-    public void addProduct(){
+    public boolean addProduct(){
 
         name = textName.getText().toString();
         tip = textTip.getText().toString();
-        cod = Integer.parseInt(textCod.getText().toString());
+        cod = textCod.getText().toString();
         groups = textGroup.getText().toString();
-        maker = (textMaker.getText().toString());
+        maker = textMaker.getText().toString();
 
         DBAdapter db = new DBAdapter(getActivity());
-        db.open();
 
-        groupsID = db.getProductsGroupID(groups);
-        makerID = db.getAccountsNameID(maker);
-long groupsIDfff = 0;
-        if (groupsID < 0){
-            groupsIDfff = db.insertProductsGroup(groups);
+        if (name != null && !name.isEmpty()){
+
+            if (cod != null && !cod.isEmpty()){
+                long longCod = Long.parseLong(cod);
+
+                if (groups != null && !groups.isEmpty()){
+
+                    if (maker != null && !maker.isEmpty()){
+
+                        db.open();
+                        groupsID = db.getProductsGroupID(groups);
+                        makerID = db.getAccountsNameID(maker);
+
+                        if (groupsID < 0){
+                            groupsID = db.insertProductsGroup(groups);
+                        }
+
+                        if (makerID < 0 ){
+                            long makerCod = db.MaxCod();
+                            makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
+                        }
+
+                        long id;
+                        id = db.insertProduct(longCod, groupsID, name, makerID, true, tip);
+                        db.close();
+
+                        if (id > 0){
+                            Toast.makeText(getActivity(), name + ' ' + getString(R.string.registred) + ' ' + id, Toast.LENGTH_SHORT).show();
+                            textSelectedProductID.setText(Long.toString(id));
+                            return true;
+                        }
+
+                        else if (id == -2)
+                            Toast.makeText(getActivity(), getString(R.string.error_cod_duplicate), Toast.LENGTH_SHORT).show();
+
+                        else
+                            Toast.makeText(getActivity(), getString(R.string.error), Toast.LENGTH_SHORT).show();
+                    }
+                    else Toast.makeText(getActivity(), getString(R.string.maker) + ' ' + getString(R.string.is_empty), Toast.LENGTH_SHORT).show();
+                }
+                else Toast.makeText(getActivity(), getString(R.string.group) + ' ' + getString(R.string.is_empty), Toast.LENGTH_SHORT).show();
+            }
+            else Toast.makeText(getActivity(), getString(R.string.cod) + ' ' + getString(R.string.is_empty), Toast.LENGTH_SHORT).show();
+            textCod.setError("dfs");
         }
-
-        if (makerID < 0 ){
-            int makerCod = db.MaxCod();
-            makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
-        }
-
-        long id;
-        id = db.insertProduct(cod, groupsIDfff, name, makerID, true, tip);
-        db.close();
-
-        if (id>0){
-            Toast.makeText(getActivity(), name + ' ' + getString(R.string.registred) + id, Toast.LENGTH_SHORT).show();
-        }
+        else Toast.makeText(getActivity(), getString(R.string.name) + ' ' + getString(R.string.is_empty), Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     /**************************************************Reset for Add********************/
@@ -266,8 +293,9 @@ long groupsIDfff = 0;
         textTip.setText("");
 
         db.open();
-        int max=db.ProductMaxCod();
-        textCod.setText(Integer.toString(max+1));
+        long max=  db.ProductMaxCod();
+
+        textCod.setText (Long.toString(max+1));
         db.close();
     }
 
