@@ -427,6 +427,21 @@ public class DBAdapter {
         return cursor;
     }
 
+    /*************************************************Check Product ID*****************************/
+
+
+    public boolean checkProductCod(long cod) throws SQLException{
+
+
+        cursor = db.rawQuery("SELECT "
+                + ProductCode + " FROM " + Products + " WHERE " + ProductCode + " = " + cod, null);
+
+        if(cursor.moveToFirst())
+            return false;
+
+        return true;
+    }
+
     /************************************************Get Products Group Name***********************/
 
     public String getProductsGroupName(long rowId) throws SQLException{

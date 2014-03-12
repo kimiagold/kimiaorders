@@ -6,7 +6,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-////
 public class ActionbarAdapter extends Activity{
 
     private MenuItem itemAdd;
