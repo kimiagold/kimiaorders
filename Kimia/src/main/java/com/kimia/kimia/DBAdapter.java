@@ -481,4 +481,17 @@ public class DBAdapter {
         initialValues.put(AccountVisible, isvisi);
         return (long) db.updateWithOnConflict(Accounts,initialValues,AccountID + "=" + rowId,null, SQLiteDatabase.CONFLICT_IGNORE);
     }
+
+    /***************************************************Update Product*****************************/
+
+    public long updateProduct(long ID, long code, long groupsID, String name, long maker, boolean visible, String tip){
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(ProductCode, code);
+        initialValues.put(ProductGroupsID, groupsID);
+        initialValues.put(ProductName, name);
+        initialValues.put(ProductMaker, maker);
+        initialValues.put(ProductIsVisible, visible);
+        initialValues.put(ProductTip, tip);
+        return (long) db.updateWithOnConflict(Products, initialValues, ProductID + "=" + ID, null, SQLiteDatabase.CONFLICT_IGNORE);
+    }
 }
