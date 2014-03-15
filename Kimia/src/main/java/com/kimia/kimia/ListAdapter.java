@@ -7,14 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ListAdapter extends BaseAdapter {
+public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
     HashMap<String, Integer> azIndexer;
     String[] sections;
@@ -35,13 +39,21 @@ public class ListAdapter extends BaseAdapter {
             cursor.moveToPosition(i);
             String element = cursor.getString(1);
             //We store the first letter of the word, and its index.
-            azIndexer.put(element.substring(0, 1), i);
+            //azIndexer.put(element.substring(0, 1), i);
+            String ch = element.substring(0, 1);
+
+
+            if (!azIndexer.containsKey(ch))
+
+
+
+                azIndexer.put(ch, i);
         }
 
         Set<String> keys = azIndexer.keySet(); // set of letters
 
         Iterator<String> it = keys.iterator();
-        ArrayList<String> keyList = new ArrayList<String>();
+        ArrayList<String> keyList = new ArrayList<String>(keys);
 
         while (it.hasNext()) {
             String key = it.next();
@@ -49,6 +61,7 @@ public class ListAdapter extends BaseAdapter {
         }
         Collections.sort(keyList);//sort the keylist
         sections = new String[keyList.size()];
+        keyList.toArray(sections);
 
     }
 
@@ -74,8 +87,35 @@ public class ListAdapter extends BaseAdapter {
         textViewName.setText(Name);
         textViewId.setText(Id);
 
+        // set selected item
+        LinearLayout ActiveItem = (LinearLayout) view;
+        if (position == selectedItem)
+        {
+            ActiveItem.setBackgroundResource(R.drawable.gradient_bg_hover);
+
+            // for focus on it
+            int top = (ActiveItem == null) ? 0 : ActiveItem.getTop();
+            ((ListView) parent).setSelectionFromTop(position, top);
+        }
+        else
+        {
+            ActiveItem
+                    .setBackgroundResource(R.drawable.gradient_bg);
+        }
+
+
+
         return view;
     }
+
+
+
+private int selectedItem;
+
+    public void setSelectedItem(int position) {
+        selectedItem = position;
+    }
+
 
     public Object getItem(int position) {
         return position;

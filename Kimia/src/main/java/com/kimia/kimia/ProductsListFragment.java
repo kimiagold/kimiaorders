@@ -69,8 +69,14 @@ public class ProductsListFragment extends Fragment {
                 ID=textViewId.getText().toString();
                 textSelectedProductID.setText(ID);
                 ((ProductsActivity)getActivity()).setView();
+                setselect(position);
             }
         });
+    }
+
+
+    public void setselect(int i){
+        listAdapter.setSelectedItem(i);
     }
 
     @Override

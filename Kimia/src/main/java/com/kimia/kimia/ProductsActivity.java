@@ -16,7 +16,7 @@ public class ProductsActivity extends ActionbarAdapter {
     private ProductsListFragment productsListFragment;
     private TextView textSelectedProductID;
     private int selectedProductID;
-    private int addOrEdit = 0;
+    private int addOrEdit = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -77,6 +77,7 @@ public class ProductsActivity extends ActionbarAdapter {
         if (selectedProductID > 0){
             setFragmentWeightEdit(false);
             actionbarSetView();
+            productsListFragment.setselect(5);
         }
         else {
             setFragmentWeightEdit(true);
@@ -85,7 +86,7 @@ public class ProductsActivity extends ActionbarAdapter {
     }
 
     public void setAdd(){
-        setEdit(2);
+        setEdit(1);
         productViewFragment.resetForAdd();
     }
 
@@ -99,6 +100,7 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemEdit:
+                //SDFproductsListFragment.setselect(0);
                 setEdit(2);
                 break;
 
@@ -123,14 +125,14 @@ public class ProductsActivity extends ActionbarAdapter {
                 switch (addOrEdit){
                     case 1:
                         if (productViewFragment.addProduct()){
-                            productsListFragment.showList();
+                          //  productsListFragment.showList();
                             setView();
                         }
                         break;
 
                     case 2:
                         if (productViewFragment.editProduct()){
-                            productsListFragment.showList();
+                          //  productsListFragment.showList();
                             setView();
                         }
                         break;

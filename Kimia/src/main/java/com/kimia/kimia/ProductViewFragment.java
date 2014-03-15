@@ -32,6 +32,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private long selectedProductCod;
 
     private boolean isEdit = false;
+    private boolean onFocusForEdit;
 
     private String cod;
     private long groupsID;
@@ -142,17 +143,21 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             selectedProductID = 0;
         }
 
-        if (selectedProductID > 0)
+        if (selectedProductID > 0) {
             showProduct();
+            onFocusForEdit = true;
+        }
 
-        else resetForAdd();
+        else {
+            resetForAdd();
+        }
     }
 
     /******************************************On focus Change*************************************/
 
     @Override
     public void onFocusChange(View view, boolean b) {
-        productsActivity.setEdit(2);
+        if (onFocusForEdit) productsActivity.setEdit(2);
 
         if (view == textGroup && !b)
             validateAdapter.validate(activity, textGroup, "", 0);
@@ -369,6 +374,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Reset for Add*******************************/
 
     public void resetForAdd(){
+
+        onFocusForEdit = false;
 
         textGroup.setText("");
         textName.setText("");
