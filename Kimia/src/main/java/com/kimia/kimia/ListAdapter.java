@@ -26,32 +26,24 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
     Cursor cursor;
     TextView textViewName;
     TextView textViewId;
+    private int selectedItem;
 
-    public ListAdapter(Context context, Cursor cur){
+    public ListAdapter(Context context, Cursor cur) {
         super();
         mContext=context;
         cursor=cur;
-        azIndexer = new HashMap<String, Integer>(); //stores the positions for the start of each letter
+        azIndexer = new HashMap<String, Integer>();
 
         int size = getCount();
         for (int i = size - 1; i >= 0; i--) {
-
             cursor.moveToPosition(i);
             String element = cursor.getString(1);
-            //We store the first letter of the word, and its index.
-            //azIndexer.put(element.substring(0, 1), i);
             String ch = element.substring(0, 1);
-
-
             if (!azIndexer.containsKey(ch))
-
-
-
                 azIndexer.put(ch, i);
         }
 
-        Set<String> keys = azIndexer.keySet(); // set of letters
-
+        Set<String> keys = azIndexer.keySet();
         Iterator<String> it = keys.iterator();
         ArrayList<String> keyList = new ArrayList<String>(keys);
 
@@ -59,25 +51,20 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
             String key = it.next();
             keyList.add(key);
         }
-        Collections.sort(keyList);//sort the keylist
+
+        Collections.sort(keyList);
         sections = new String[keyList.size()];
         keyList.toArray(sections);
-
     }
 
-    public int getCount(){
-
+    public int getCount() {
         return cursor.getCount();
     }
 
-
-    public View getView(int position,  View view, ViewGroup parent){
-
+    public View getView(int position,  View view, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.user_listitem, null);
-
         cursor.moveToPosition(position);
-
         String Name=cursor.getString(1);
         String Id=cursor.getString(0);
 
@@ -89,33 +76,22 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
         // set selected item
         LinearLayout ActiveItem = (LinearLayout) view;
-        if (position == selectedItem)
-        {
-            ActiveItem.setBackgroundResource(R.drawable.gradient_bg_hover);
+        if (position == selectedItem) {
+            ActiveItem.setBackgroundResource(R.drawable.item_background_select);
 
             // for focus on it
             int top = (ActiveItem == null) ? 0 : ActiveItem.getTop();
             ((ListView) parent).setSelectionFromTop(position, top);
+        } else {
+            ActiveItem.setBackgroundResource(R.drawable.item_background);
         }
-        else
-        {
-            ActiveItem
-                    .setBackgroundResource(R.drawable.gradient_bg);
-        }
-
-
 
         return view;
     }
 
-
-
-private int selectedItem;
-
     public void setSelectedItem(int position) {
         selectedItem = position;
     }
-
 
     public Object getItem(int position) {
         return position;
