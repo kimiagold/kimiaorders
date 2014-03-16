@@ -40,10 +40,10 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     //private ListView listViewProductGroup;
     //private ListView listViewMaker;
     private Cursor cursor;
-    private ListAdapter listAdapter;
-    private Context context;
+    //private ListAdapter listAdapter;
+    //private Context context;
     private DBAdapter db;
-    private boolean visible;
+    //private boolean visible;
     private Activity activity;
 
     private long selectedProductID;
@@ -53,7 +53,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState){
-
         return inflater.inflate(R.layout.fragment_product_view, container, false);
     }
 
@@ -75,16 +74,20 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     public void onStart(){
 
         super.onStart();
+        activity = getActivity();
 
-        if (getActivity() != null) {
-            textGroup = (AutoCompleteTextView) getActivity().findViewById(R.id.ProductEditGroupID);
-            textMaker = (AutoCompleteTextView) getActivity().findViewById(R.id.ProductEditMaker);
+        if (activity != null) {
+            textGroup = (AutoCompleteTextView) activity.findViewById(R.id.ProductEditGroupID);
+            textMaker = (AutoCompleteTextView) activity.findViewById(R.id.ProductEditMaker);
 
-            textName = (EditText) getActivity().findViewById(R.id.ProductEditName);
-            textCod = (EditText) getActivity().findViewById(R.id.ProductEditCod);
-            textTip = (EditText) getActivity().findViewById(R.id.ProductEditTip);
-            textSelectedProductID = (TextView) getActivity().findViewById(R.id.SelectedProductID);
-            activity = getActivity();
+            textName = (EditText) activity.findViewById(R.id.ProductEditName);
+            textCod = (EditText) activity.findViewById(R.id.ProductEditCod);
+            textTip = (EditText) activity.findViewById(R.id.ProductEditTip);
+            textSelectedProductID = (TextView) activity.findViewById(R.id.SelectedProductID);
+
+            db = new DBAdapter(activity);
+            //context = activity;
+
             validateAdapter = new ValidateAdapter();
         }
 
@@ -93,9 +96,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textMaker.setOnFocusChangeListener(this);
         textCod.setOnFocusChangeListener(this);
         textTip.setOnFocusChangeListener(this);
-
-        db = new DBAdapter(getActivity());
-        context = getActivity();
 
         checkEdit();
         //listViewProductGroup = (ListView) getActivity().findViewById(R.id.Product_ListGroup);
@@ -256,7 +256,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         }
         else setFocus(textGroup);
 
-
         if ( status == 4 ) {
             db.open();
             groupsID = db.getProductsGroupID(groups);
@@ -295,7 +294,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /*********************************************Edit Product*************************************/
 
-    public boolean editProduct(){
+    public boolean editProduct() {
         isEdit = false;
         int status = 0;
 
@@ -374,9 +373,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Reset for Add*******************************/
 
     public void resetForAdd(){
-
         onFocusForEdit = false;
-
         textGroup.setText("");
         textName.setText("");
         textMaker.setText("");
@@ -395,7 +392,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /******************************************Set Focus & show keyboard***************************/
 
     public void setFocus(EditText editText){
-
         if(editText.requestFocus()) {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
@@ -414,7 +410,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Show Accounts List*****8********************/
 
     private void showMakersList() {
-
         db.open();
         super.onResume();
         String filter;
@@ -422,7 +417,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         cursor = db.filterAccounts(filter);
 
         if(cursor != null && cursor.moveToFirst()){
-            textMaker.setAdapter(new AutoCompleteAdapter(getActivity(), cursor));
+            textMaker.setAdapter(new AutoCompleteAdapter(activity, cursor));
         }
 
         db.close();
@@ -440,7 +435,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Show Products Group List********************/
 
     private void showProductsGroupList(){
-
         db.open();
         super.onResume();
         String filter;
@@ -448,7 +442,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         cursor = db.filterProductsGroup(filter);
 
         if(cursor != null && cursor.moveToFirst()){
-            textGroup.setAdapter(new AutoCompleteAdapter(getActivity(), cursor));
+            textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor));
         }
 
         db.close();

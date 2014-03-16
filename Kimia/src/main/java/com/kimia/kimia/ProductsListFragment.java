@@ -57,6 +57,7 @@ public class ProductsListFragment extends Fragment {
         listAdapter = new ListAdapter(getActivity(), cursor);
         listView.setFastScrollAlwaysVisible(true);
         listView.setAdapter(listAdapter);
+        listView.setSmoothScrollbarEnabled(true);
 
         db.close();
 
@@ -69,19 +70,28 @@ public class ProductsListFragment extends Fragment {
                 ID=textViewId.getText().toString();
                 textSelectedProductID.setText(ID);
                 ((ProductsActivity)getActivity()).setView();
-                setselect(position);
+                setSelect(position);
             }
         });
     }
 
-
-    public void setselect(int i){
+    public void setSelect(int i) {
         listAdapter.setSelectedItem(i);
+        //listView.setSelection(i);
+    }
+
+    public void setScroll() {
+        //listAdapter.setSelectedItem(i);
+        String a = textSelectedProductID.getText().toString();
+        long i = Long.parseLong(a);
+        int n = listAdapter.getItemPosition(12);
+        listView.setSelection(n);
+        setSelect(n);
     }
 
     @Override
     public void onResume() {
-        showList();
+        //showList();
         super.onResume();
     }
 

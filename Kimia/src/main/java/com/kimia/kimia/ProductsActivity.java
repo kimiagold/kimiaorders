@@ -65,6 +65,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
         productViewFragment.checkEdit();
         productsListFragment.showList();
+        productsListFragment.setScroll();
 
 
         try {
@@ -77,7 +78,7 @@ public class ProductsActivity extends ActionbarAdapter {
         if (selectedProductID > 0){
             setFragmentWeightEdit(false);
             actionbarSetView();
-            productsListFragment.setselect(5);
+            //productsListFragment.setSelect(5);
         }
         else {
             setFragmentWeightEdit(true);
