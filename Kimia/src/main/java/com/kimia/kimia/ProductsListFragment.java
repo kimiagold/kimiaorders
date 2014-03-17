@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class ProductsListFragment extends Fragment {
 
@@ -18,8 +21,10 @@ public class ProductsListFragment extends Fragment {
     ListAdapter listAdapter;
     Context context;
     private TextView textSelectedProductID;
+    private ArrayList<Long> itemID;
     DBAdapter db;
     int i=0;
+    private int itemPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -53,9 +58,14 @@ public class ProductsListFragment extends Fragment {
         db.open();
         super.onResume();
         cursor = db.getAllProductName();
+        itemID = new ArrayList<Long>();
+        for (int i = 0; i < cursor.getCount(); i++){
+            cursor.moveToPosition(i);
+            itemID.add(Long.parseLong(cursor.getString(0)));
+        }
 
         listAdapter = new ListAdapter(getActivity(), cursor);
-        listView.setFastScrollAlwaysVisible(true);
+       // listView.setFastScrollAlwaysVisible(true);
         listView.setAdapter(listAdapter);
         listView.setSmoothScrollbarEnabled(true);
 
@@ -69,10 +79,27 @@ public class ProductsListFragment extends Fragment {
                 String ID;
                 ID=textViewId.getText().toString();
                 textSelectedProductID.setText(ID);
-                ((ProductsActivity)getActivity()).setView();
                 setSelect(position);
+                ((ProductsActivity)getActivity()).setView(false);
             }
         });
+    }
+
+    public void setNextItem(){
+        if (itemPosition == itemID.size()-1)
+            itemPosition--;
+
+        else if (itemPosition < itemID.size()-1)
+            itemPosition = itemPosition;
+
+        else itemPosition = 0;
+
+
+        db.open();
+        cursor = db.getAllProductName();
+        cursor.moveToPosition(itemPosition);
+        textSelectedProductID.setText(cursor.getString(0));
+        db.close();
     }
 
     public void setSelect(int i) {
@@ -80,13 +107,36 @@ public class ProductsListFragment extends Fragment {
         //listView.setSelection(i);
     }
 
-    public void setScroll() {
+    public int getItemPosition(long id) {
+        for (int position=0; position<itemID.size(); position++)
+            if (itemID.get(position) == id)
+                return position;
+        return 0;
+    }
+
+    public void setScroll(boolean scroll) {
+        listAdapter.notifyDataSetChanged();
         //listAdapter.setSelectedItem(i);
         String a = textSelectedProductID.getText().toString();
         long i = Long.parseLong(a);
-        int n = listAdapter.getItemPosition(12);
-        listView.setSelection(n);
-        setSelect(n);
+        itemPosition = getItemPosition(i);
+        setSelect(itemPosition);
+       // int ii = listView.getVerticalScrollbarPosition();
+     //   int ii = listView.getFirstVisiblePosition();
+
+        View c = listView.getChildAt(0);
+        int scrolly = (c != null ? c.getTop() : 0) + listView.getFirstVisiblePosition() * (c != null ? c.getHeight() : 0);
+
+
+        listView.setSelectionFromTop(itemPosition,scrolly);
+        //listView.setAdapter(listView.getAdapter());
+        //int index = listView.getLastVisiblePosition();
+       // View v = listView.getChildAt(0);
+     //   int top = (v == null) ? 0 : v.getTop();
+
+// ...
+// restore index and position
+//        listView.setSelectionFromTop(index, top);
     }
 
     @Override

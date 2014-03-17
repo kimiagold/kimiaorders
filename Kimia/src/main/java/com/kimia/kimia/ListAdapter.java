@@ -24,9 +24,10 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
     private Context mContext;
     Cursor cursor;
     TextView textViewName;
-    private ArrayList<Long> itemID;
     TextView textViewId;
     private int selectedItem;
+    View view1;
+    ViewGroup parent1;
 
     public ListAdapter(Context context, Cursor cur) {
         super();
@@ -46,7 +47,6 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
                 azIndexer.put(ch, i);
         }
 
-        itemID = new ArrayList<Long>();
         Set<String> keys = azIndexer.keySet();
         Iterator<String> it = keys.iterator();
         ArrayList<String> keyList = new ArrayList<String>(keys);
@@ -71,13 +71,14 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
         cursor.moveToPosition(position);
         String Name=cursor.getString(1);
         String Id=cursor.getString(0);
+        view1 = view;
+        parent1 = parent;
 
         if (view != null){
             textViewName = (TextView) view.findViewById(R.id.username);
             textViewId = (TextView) view.findViewById(R.id.userid);
         }
 
-        itemID.add(Long.parseLong(Id));
         textViewName.setText(Name);
         textViewId.setText(Id);
 
@@ -100,15 +101,11 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
         return view;
     }
 
-    public int getItemPosition(long id) {
-        for (int position=0; position < itemID.size(); position++)
-            if (itemID.get(position) == id)
-                return position;
-        return 0;
-    }
-
     public void setSelectedItem(int position) {
         selectedItem = position;
+        // for focus on it
+  //      int top = (ActiveItem == null) ? 0 : ActiveItem.getTop();
+//        ((ListView) parent1).setSelectionFromTop(position, top);
     }
 
     public Object getItem(int position) {

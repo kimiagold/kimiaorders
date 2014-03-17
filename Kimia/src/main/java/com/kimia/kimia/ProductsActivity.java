@@ -54,7 +54,7 @@ public class ProductsActivity extends ActionbarAdapter {
         addOrEdit = a;
     }
 
-    public void setView(){
+    public void setView(boolean scroll){
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         View v=getCurrentFocus();
 
@@ -65,8 +65,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
         productViewFragment.checkEdit();
         productsListFragment.showList();
-        productsListFragment.setScroll();
-
+        productsListFragment.setScroll(scroll);
 
         try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
@@ -101,7 +100,6 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemEdit:
-                //SDFproductsListFragment.setselect(0);
                 setEdit(2);
                 break;
 
@@ -113,7 +111,8 @@ public class ProductsActivity extends ActionbarAdapter {
 
                 if (c){
                     Toast.makeText(this, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
-                    setView();
+                    productsListFragment.setNextItem();
+                    setView(true);
                 }
                 else
                     Toast.makeText(this, getString(R.string.error),Toast.LENGTH_SHORT).show();
@@ -126,15 +125,13 @@ public class ProductsActivity extends ActionbarAdapter {
                 switch (addOrEdit){
                     case 1:
                         if (productViewFragment.addProduct()){
-                          //  productsListFragment.showList();
-                            setView();
+                            setView(true);
                         }
                         break;
 
                     case 2:
                         if (productViewFragment.editProduct()){
-                          //  productsListFragment.showList();
-                            setView();
+                            setView(true);
                         }
                         break;
                 }
@@ -142,7 +139,7 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemCancel:
-                setView();
+                setView(true);
                 break;
 
             default:
