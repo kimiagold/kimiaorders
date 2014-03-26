@@ -30,7 +30,11 @@
     <string name="Products">اجناس</string>
     <string name="Accept">تایید</string>
     <string name="Null">هیچی</string>
+    <string name="Yes">بله</string>
+    <string name="No">خیر</string>
     <string name="is_empty">خالیست!</string>
+    <string name="Deleted_Q">پاک شود؟</string>
+
 
 
 

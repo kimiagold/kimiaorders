@@ -1,7 +1,11 @@
 package com.kimia.kimia;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +20,20 @@ public class ProductsActivity extends ActionbarAdapter {
     private ProductsListFragment productsListFragment;
     private TextView textSelectedProductID;
     private int selectedProductID;
+    private Activity activity;
     private int addOrEdit = 1;
+    private DBAdapter db;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products);
 
+        activity = this;
         productViewFragment = (ProductViewFragment) getFragmentManager().findFragmentById(R.id.ProductsViewFragment);
         productsListFragment = (ProductsListFragment) getFragmentManager().findFragmentById(R.id.ProductsListFragment);
         textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
+        db = new DBAdapter(this);
         /*
         ProductViewFragment fragment1 = new ProductViewFragment();
         getFragmentManager().beginTransaction().add(R.id.ProductsViewFragment, fragment1).commit();
@@ -104,20 +112,53 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemDelete:
-                DBAdapter db = new DBAdapter(this);
-                db.open();
+                LayoutInflater factory = LayoutInflater.from(this);
+                final View deleteDialogView = factory.inflate(R.layout.delete_dialog, null);
+                final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
+                deleteDialog.setView(deleteDialogView);
+                TextView textDialog = null;
+                if (deleteDialogView != null) {
+                    textDialog = (TextView) deleteDialogView.findViewById(R.id.txt_dialog);
+                    String name = null;
+                    Cursor c;
+                    db.open();
+                    c = db.getProduct(Long.parseLong(textSelectedProductID.getText().toString()));
 
-                boolean c=db.deleteProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+                    if(c != null && c.moveToFirst())
+                        name = c.getString(0);
 
-                if (c){
-                    Toast.makeText(this, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
-                    productsListFragment.setNextItem();
-                    setView(true);
+                    db.close();
+
+                    textDialog.setText(name + " " + getString(R.string.Deleted_Q));
+                    deleteDialogView.findViewById(R.id.delete_yes).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            db.open();
+                            boolean c=db.deleteProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+
+                            if (c){
+                                Toast.makeText(activity, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
+                                productsListFragment.setNextItem();
+                            setView(false);
+                            }
+                            else
+                                Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
+
+                            db.close();
+
+                            deleteDialog.dismiss();
+                        }
+                    });
+
+                    deleteDialogView.findViewById(R.id.delete_no).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deleteDialog.dismiss();
+                        }
+                    });
                 }
-                else
-                    Toast.makeText(this, getString(R.string.error),Toast.LENGTH_SHORT).show();
 
-                db.close();
+                deleteDialog.show();
                 break;
 
             case R.id.ItemAccept:

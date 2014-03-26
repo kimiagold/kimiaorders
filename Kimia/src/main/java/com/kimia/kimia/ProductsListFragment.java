@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class ProductsListFragment extends Fragment {
 
@@ -24,7 +25,9 @@ public class ProductsListFragment extends Fragment {
     private ArrayList<Long> itemID;
     DBAdapter db;
     int i=0;
+    private int firstScroll;
     private int itemPosition;
+    View c;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -72,6 +75,7 @@ public class ProductsListFragment extends Fragment {
         db.close();
 
         listView.setOnCreateContextMenuListener(this);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3){
@@ -80,6 +84,8 @@ public class ProductsListFragment extends Fragment {
                 ID=textViewId.getText().toString();
                 textSelectedProductID.setText(ID);
                 setSelect(position);
+                firstScroll = listView.getFirstVisiblePosition();
+                c = listView.getChildAt(1);
                 ((ProductsActivity)getActivity()).setView(false);
             }
         });
@@ -94,7 +100,6 @@ public class ProductsListFragment extends Fragment {
 
         else itemPosition = 0;
 
-
         db.open();
         cursor = db.getAllProductName();
         cursor.moveToPosition(itemPosition);
@@ -104,7 +109,6 @@ public class ProductsListFragment extends Fragment {
 
     public void setSelect(int i) {
         listAdapter.setSelectedItem(i);
-        //listView.setSelection(i);
     }
 
     public int getItemPosition(long id) {
@@ -116,27 +120,19 @@ public class ProductsListFragment extends Fragment {
 
     public void setScroll(boolean scroll) {
         listAdapter.notifyDataSetChanged();
-        //listAdapter.setSelectedItem(i);
         String a = textSelectedProductID.getText().toString();
         long i = Long.parseLong(a);
         itemPosition = getItemPosition(i);
         setSelect(itemPosition);
-       // int ii = listView.getVerticalScrollbarPosition();
-     //   int ii = listView.getFirstVisiblePosition();
+        int scrollY = 0;
 
-        View c = listView.getChildAt(0);
-        int scrolly = (c != null ? c.getTop() : 0) + listView.getFirstVisiblePosition() * (c != null ? c.getHeight() : 0);
+        if (!scroll) {
+            int h = c != null ? c.getHeight() + 1 : 0;
+            int t = c != null ? c.getTop() : 0;
+            scrollY = (itemPosition - firstScroll-1)*h + t;
+        }
 
-
-        listView.setSelectionFromTop(itemPosition,scrolly);
-        //listView.setAdapter(listView.getAdapter());
-        //int index = listView.getLastVisiblePosition();
-       // View v = listView.getChildAt(0);
-     //   int top = (v == null) ? 0 : v.getTop();
-
-// ...
-// restore index and position
-//        listView.setSelectionFromTop(index, top);
+        listView.setSelectionFromTop(itemPosition,scrollY);
     }
 
     @Override

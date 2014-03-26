@@ -34,7 +34,10 @@
     <string name="Products">Products</string>
     <string name="Accept">Accept</string>
     <string name="Null">NULL</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
     <string name="is_empty">is empty!</string>
+    <string name="Deleted_Q">Deleted?</string>
 
 
 </resources>

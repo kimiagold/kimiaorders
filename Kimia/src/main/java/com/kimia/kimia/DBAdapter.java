@@ -294,8 +294,9 @@ public class DBAdapter {
                 true, ProductGroups,
                 new String[] {ProductGroupID, ProductGroupName},
                 ProductGroupName + " LIKE ?",
-                new String[] {"%" + filter + "%"},
+                new String[] { filter + "%"},
                 null, null, ProductGroupName, null );
+
         return cursor;
     }
 
@@ -303,9 +304,10 @@ public class DBAdapter {
 
     public Cursor filterAccounts(String filter){
 
-        cursor = db.rawQuery("SELECT " + AccountID + " , " + AccountName + " FROM "
-                + Accounts + " WHERE " + AccountGroupID + " = 1 AND " + AccountName + " LIKE "
-                + "'%" + filter + "%';", null);
+        cursor = db.rawQuery("SELECT " + AccountID + ", "
+                + AccountName + " FROM " + Accounts
+                + " WHERE " + AccountGroupID + " = 1 AND "
+                + AccountName + " LIKE '" + filter + "%';", null);
         return cursor;
     }
 
@@ -327,7 +329,6 @@ public class DBAdapter {
 
     /**********************************************************************************************/
 
-
     public boolean deleteAc(long rowId){
         return db.delete(Accounts, AccountID + "=" + rowId, null)> 0;
     }
@@ -339,7 +340,6 @@ public class DBAdapter {
     }
 
     /**********************************************************************************************/
-
 
     public Cursor getALLacname(){
         cursor = db.query(Accounts,new String[]{AccountID,AccountName},null ,null,null,null,AccountName);

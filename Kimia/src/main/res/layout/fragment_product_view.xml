@@ -40,7 +40,7 @@
                 android:gravity="start"
                 android:paddingStart="20dp" />
 
-            <AutoCompleteTextView
+            <com.kimia.kimia.InstantAutoComplete
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditGroupID"
@@ -56,7 +56,6 @@
                 android:layout_gravity="center_vertical"
                 android:ems="5"
                 android:gravity="start"
-                android:paddingStart="20dp"
                 android:selectAllOnFocus="true"
                 android:enabled="true"
                 android:focusable="true"
@@ -75,7 +74,7 @@
                 android:paddingEnd="10dp" />
 
 
-            <AutoCompleteTextView
+            <com.kimia.kimia.InstantAutoComplete
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditMaker"
@@ -104,7 +103,6 @@
                 android:layout_gravity="center_vertical"
                 android:ems="5"
                 android:gravity="start"
-                android:paddingStart="20dp"
                 android:focusableInTouchMode="true"
                 android:focusable="true"
                 android:selectAllOnFocus="true"
@@ -132,7 +130,6 @@
                 android:ems="5"
                 android:layout_gravity="center_vertical"
                 android:gravity="start"
-                android:paddingStart="20dp"
                 android:selectAllOnFocus="true"
                 android:clickable="false"
                 android:focusable="true"

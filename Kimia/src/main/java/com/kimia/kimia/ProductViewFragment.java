@@ -96,6 +96,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textMaker.setOnFocusChangeListener(this);
         textCod.setOnFocusChangeListener(this);
         textTip.setOnFocusChangeListener(this);
+        textGroup.setThreshold(0);
 
         checkEdit();
         //listViewProductGroup = (ListView) getActivity().findViewById(R.id.Product_ListGroup);
@@ -157,7 +158,16 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     @Override
     public void onFocusChange(View view, boolean b) {
-        if (onFocusForEdit) productsActivity.setEdit(2);
+        if (onFocusForEdit) {
+            productsActivity.setEdit(2);
+            isEdit = true;
+        }
+
+        if (view == textGroup && b)
+            showProductsGroupList();
+
+        if (view == textMaker && b)
+            showMakersList();
 
         if (view == textGroup && !b)
             validateAdapter.validate(activity, textGroup, "", 0);
@@ -415,11 +425,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         String filter;
         filter = textMaker.getText().toString();
         cursor = db.filterAccounts(filter);
-
-        if(cursor != null && cursor.moveToFirst()){
-            textMaker.setAdapter(new AutoCompleteAdapter(activity, cursor));
-        }
-
+        cursor.moveToFirst();
+        textMaker.setAdapter(new AutoCompleteAdapter(activity, cursor));
         db.close();
         textMaker.setOnCreateContextMenuListener(this);
         textMaker.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -428,6 +435,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 String ID;
                 ID=textViewId.getText().toString();
                 textMaker.setText(ID);
+                textMaker.setSelection(textMaker.getText().length());
             }
         });
     }
@@ -440,11 +448,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         String filter;
         filter = textGroup.getText().toString();
         cursor = db.filterProductsGroup(filter);
-
-        if(cursor != null && cursor.moveToFirst()){
-            textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor));
-        }
-
+        cursor.moveToFirst();
+        textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor));
         db.close();
         textGroup.setOnCreateContextMenuListener(this);
         textGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -453,6 +458,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 String ID;
                 ID = textViewId.getText().toString();
                 textGroup.setText(ID);
+                textGroup.setSelection(textGroup.getText().length());
             }
         });
     }
