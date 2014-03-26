@@ -25,12 +25,10 @@ public class InstantAutoComplete extends AutoCompleteTextView {
     }
 
     @Override
-    protected void onFocusChanged(boolean focused, int direction,
-                                  Rect previouslyFocusedRect) {
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (focused) {
             performFiltering(getText(), 0);
         }
     }
-
 }

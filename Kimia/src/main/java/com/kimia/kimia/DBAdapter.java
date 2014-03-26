@@ -13,7 +13,7 @@ public class DBAdapter {
     private Cursor cursor;
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "kimia-db";
-    private static final int DATABASE_VERSION = 85;
+    private static final int DATABASE_VERSION = 87;
     private final Context context;
     private DatabaseHelper DBHelper;
     private SQLiteDatabase db;
@@ -115,7 +115,7 @@ public class DBAdapter {
             + ProductAN5 + " INTEGER, "
             + ProductAN6 + " INTEGER, "
             + ProductMaker + " INTEGER, "
-            + "UNIQUE (" + ProductGroupsID + ", " + ProductName + ") ON CONFLICT REPLACE, "
+            + "UNIQUE (" + ProductGroupsID + ", " + ProductName + ") , "
             + "FOREIGN KEY(" + ProductGroupsID + ") REFERENCES " + ProductGroups + "(" + ProductGroupID + "), "
             + "FOREIGN KEY (" + ProductMaker + ") REFERENCES " + Accounts + " (" + AccountID + "));";
 
@@ -194,8 +194,8 @@ public class DBAdapter {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
             Log.w(TAG, "Upgrading database from version" + oldVersion + "to" + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS "+ Accounts);
-        //    db.execSQL("DROP TABLE IF EXISTS "+ Products);
-        //    db.execSQL("DROP TABLE IF EXISTS "+ ProductGroups);
+            db.execSQL("DROP TABLE IF EXISTS "+ Products);
+            db.execSQL("DROP TABLE IF EXISTS "+ ProductGroups);
             onCreate(db);
         }
     }
@@ -263,10 +263,14 @@ public class DBAdapter {
         try {
             a = db.insertOrThrow(Products, null, initialValues);
         } catch (Exception e) {
-            if (e.getMessage().equals("column " + ProductCode + " is not unique (code 19)"))
+            String error = e.getMessage();
+
+            if (error.equals("column " + ProductCode + " is not unique (code 19)"))
                 a=-2;
-            else
+            else if (error.equals("columns " + ProductGroupsID + ", " + ProductName + " are not unique (code 19)"))
                 a=-3;
+            else
+                a = -4;
         }
         return a;
     }

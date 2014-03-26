@@ -56,10 +56,11 @@ public class ProductsActivity extends ActionbarAdapter {
         layout.setLayoutParams(params);
     }
 
-    public void setEdit(int a){
+    public void setEdit(boolean changeFocus){
         actionbarSetEdit();
         setFragmentWeightEdit(true);
-        addOrEdit = a;
+        if (changeFocus) productViewFragment.resetForAdd(false);
+        addOrEdit = 2;
     }
 
     public void setView(boolean scroll){
@@ -71,7 +72,7 @@ public class ProductsActivity extends ActionbarAdapter {
             v.clearFocus();
         }
 
-        productViewFragment.checkEdit();
+        productViewFragment.checkFirsItem();
         productsListFragment.showList();
         productsListFragment.setScroll(scroll);
 
@@ -94,8 +95,60 @@ public class ProductsActivity extends ActionbarAdapter {
     }
 
     public void setAdd(){
-        setEdit(1);
-        productViewFragment.resetForAdd();
+        actionbarSetEdit();
+        setFragmentWeightEdit(true);
+        productViewFragment.resetForAdd(true);
+        addOrEdit = 1;
+    }
+
+    private void deleteProduct(){
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View deleteDialogView = factory.inflate(R.layout.delete_dialog, null);
+        final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
+        deleteDialog.setView(deleteDialogView);
+        TextView textDialog = null;
+        if (deleteDialogView != null) {
+            textDialog = (TextView) deleteDialogView.findViewById(R.id.txt_dialog);
+            String name = null;
+            Cursor c;
+            db.open();
+            c = db.getProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+
+            if(c != null && c.moveToFirst())
+                name = c.getString(0);
+
+            db.close();
+
+            textDialog.setText(name + " " + getString(R.string.Deleted_Q));
+            deleteDialogView.findViewById(R.id.delete_yes).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    db.open();
+                    boolean c=db.deleteProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+
+                    if (c){
+                        Toast.makeText(activity, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
+                        productsListFragment.setNextItem();
+                        setView(false);
+                    }
+                    else
+                        Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
+
+                    db.close();
+
+                    deleteDialog.dismiss();
+                }
+            });
+
+            deleteDialogView.findViewById(R.id.delete_no).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteDialog.dismiss();
+                }
+            });
+        }
+
+        deleteDialog.show();
     }
 
     @Override
@@ -108,57 +161,11 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemEdit:
-                setEdit(2);
+                setEdit(true);
                 break;
 
             case R.id.ItemDelete:
-                LayoutInflater factory = LayoutInflater.from(this);
-                final View deleteDialogView = factory.inflate(R.layout.delete_dialog, null);
-                final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
-                deleteDialog.setView(deleteDialogView);
-                TextView textDialog = null;
-                if (deleteDialogView != null) {
-                    textDialog = (TextView) deleteDialogView.findViewById(R.id.txt_dialog);
-                    String name = null;
-                    Cursor c;
-                    db.open();
-                    c = db.getProduct(Long.parseLong(textSelectedProductID.getText().toString()));
-
-                    if(c != null && c.moveToFirst())
-                        name = c.getString(0);
-
-                    db.close();
-
-                    textDialog.setText(name + " " + getString(R.string.Deleted_Q));
-                    deleteDialogView.findViewById(R.id.delete_yes).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            db.open();
-                            boolean c=db.deleteProduct(Long.parseLong(textSelectedProductID.getText().toString()));
-
-                            if (c){
-                                Toast.makeText(activity, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
-                                productsListFragment.setNextItem();
-                            setView(false);
-                            }
-                            else
-                                Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
-
-                            db.close();
-
-                            deleteDialog.dismiss();
-                        }
-                    });
-
-                    deleteDialogView.findViewById(R.id.delete_no).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            deleteDialog.dismiss();
-                        }
-                    });
-                }
-
-                deleteDialog.show();
+                deleteProduct();
                 break;
 
             case R.id.ItemAccept:
