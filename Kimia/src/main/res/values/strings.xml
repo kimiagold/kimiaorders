@@ -38,6 +38,7 @@
     <string name="No">No</string>
     <string name="is_empty">is empty!</string>
     <string name="Deleted_Q">Deleted?</string>
+    <string name="Edited">edited</string>
 
 
 </resources>

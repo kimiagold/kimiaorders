@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,8 +22,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     private AutoCompleteTextView textGroup;
     private AutoCompleteTextView textMaker;
+    private AutoCompleteTextView textName;
 
-    private EditText textName;
     private EditText textCod;
     private EditText textTip;
     private String groups;
@@ -77,8 +78,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if (activity != null) {
             textGroup = (AutoCompleteTextView) activity.findViewById(R.id.ProductEditGroupID);
             textMaker = (AutoCompleteTextView) activity.findViewById(R.id.ProductEditMaker);
+            textName = (AutoCompleteTextView) activity.findViewById(R.id.ProductEditName);
 
-            textName = (EditText) activity.findViewById(R.id.ProductEditName);
             textCod = (EditText) activity.findViewById(R.id.ProductEditCod);
             textTip = (EditText) activity.findViewById(R.id.ProductEditTip);
             textSelectedProductID = (TextView) activity.findViewById(R.id.SelectedProductID);
@@ -129,6 +130,22 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        textName.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isEdit){
+                    showNameList();
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     /********************************************Check Edit****************************************/
@@ -166,11 +183,17 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if (view == textMaker && b)
             showMakersList();
 
+        if (view == textName && b)
+            showNameList();
+
         if (view == textGroup && b && textGroup.getText().toString().trim().length() > 0)
             textGroup.dismissDropDown();
 
         if (view == textMaker && b && textMaker.getText().toString().trim().length() > 0)
             textMaker.dismissDropDown();
+
+        if (view == textName && b && textName.getText().toString().trim().length() > 0)
+            textName.dismissDropDown();
 
         if (view == textGroup && !b)
             validateAdapter.validateEditText(activity, textGroup);
@@ -290,7 +313,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             db.close();
 
             if (id > 0){
-                Toast.makeText(activity, name + ' ' + getString(R.string.registred) + ' ' + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, name + ' ' + getString(R.string.registred), Toast.LENGTH_SHORT).show();
                 textSelectedProductID.setText(Long.toString(id));
                 resetAllValidate();
                 return true;
@@ -372,14 +395,19 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             id = db.updateProduct(selectedProductID, longCod, groupsID, name, makerID, true, tip);
             db.close();
 
-            if (id==1){
-                Toast.makeText(activity, getString(R.string.registred),
-                        Toast.LENGTH_SHORT).show();
+            if (id > 0){
+                Toast.makeText(activity, name + ' ' + getString(R.string.Edited), Toast.LENGTH_SHORT).show();
+                textSelectedProductID.setText(Long.toString(id));
+                resetAllValidate();
                 return true;
-            }
-            else{
-                Toast.makeText(activity,getString(R.string.error),
-                        Toast.LENGTH_SHORT).show();
+
+            } else if (id == -2) {
+                validateAdapter.setDuplicate(activity, textCod);
+                return false;
+
+            } else if (id == -3) {
+                validateAdapter.setDuplicate2(activity, textName);
+                setFocus(textName);
                 return false;
             }
         }
@@ -435,7 +463,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         filter = textMaker.getText().toString();
         cursor = db.filterAccounts(filter);
         cursor.moveToFirst();
-        textMaker.setAdapter(new AutoCompleteAdapter(activity, cursor));
+        textMaker.setAdapter(new AutoCompleteAdapter(activity, cursor, true, true));
         db.close();
         textMaker.setOnCreateContextMenuListener(this);
         textMaker.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -458,7 +486,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         filter = textGroup.getText().toString();
         cursor = db.filterProductsGroup(filter);
         cursor.moveToFirst();
-        textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor));
+        textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor , false, true));
         db.close();
         textGroup.setOnCreateContextMenuListener(this);
         textGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -472,5 +500,26 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         });
     }
 
-    /**********************************************************************************************/
+    /*************************************************Show Name List*******************************/
+
+    private void showNameList(){
+        db.open();
+        super.onResume();
+        String filter;
+        filter = textName.getText().toString();
+        cursor = db.filterProductsName(filter);
+        cursor.moveToFirst();
+        textName.setAdapter(new AutoCompleteAdapter(activity, cursor , false, false));
+        db.close();
+        textName.setOnCreateContextMenuListener(this);
+        textName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
+                TextView textViewId = (TextView) v.findViewById(R.id.username);
+                String ID;
+                ID = textViewId.getText().toString();
+                textName.setText(ID);
+                textName.setSelection(textName.getText().length());
+            }
+        });
+    }
 }

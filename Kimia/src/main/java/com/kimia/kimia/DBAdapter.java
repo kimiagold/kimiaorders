@@ -304,21 +304,32 @@ public class DBAdapter {
         return cursor;
     }
 
+    /**************************************************Filter Products Name***********************/
+
+    public Cursor filterProductsName(String filter){
+
+        cursor = db.rawQuery("SELECT DISTINCT " + ProductName
+                + " FROM " + Products
+                + " WHERE " + ProductName + " LIKE '" + filter + "%'"
+                + " ORDER BY " + ProductName + ";", null);
+        return cursor;
+    }
     /**************************************************Filter Accounts*****************************/
 
     public Cursor filterAccounts(String filter){
 
-        cursor = db.rawQuery("SELECT " + AccountID + ", "
-                + AccountName + " FROM " + Accounts
+        cursor = db.rawQuery("SELECT " + AccountID + ", " + AccountName
+                + " FROM " + Accounts
                 + " WHERE " + AccountGroupID + " = 1 AND "
-                + AccountName + " LIKE '" + filter + "%';", null);
+                + AccountName + " LIKE '" + filter + "%'"
+                + " ORDER BY " + AccountName + ";", null);
         return cursor;
     }
 
-    /********************************************************Insert Product Group*******************/
+    /*******************************************************Insert Product Group*******************/
 
     public int insertProductsGroup(String name){
-        int a=0;
+        int a;
         ContentValues initialValues = new ContentValues();
         initialValues.put(ProductGroupName, name);
 
@@ -496,6 +507,21 @@ public class DBAdapter {
         initialValues.put(ProductMaker, maker);
         initialValues.put(ProductIsVisible, visible);
         initialValues.put(ProductTip, tip);
-        return (long) db.updateWithOnConflict(Products, initialValues, ProductID + "=" + ID, null, SQLiteDatabase.CONFLICT_IGNORE);
+        long a;
+        try {
+            a = db.update(Products, initialValues, ProductID + "=" + ID, null);
+        } catch (Exception e) {
+        String error = e.getMessage();
+
+            if (error.equals("column " + ProductCode + " is not unique (code 19)"))
+                a =-2;
+
+            else if (error.equals("columns " + ProductGroupsID + ", " + ProductName + " are not unique (code 19)"))
+                a = -3;
+
+            else
+                a=-4;
+        }
+        return a;
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,11 +23,19 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
     private Cursor cursor;
     private TextView textViewName;
     private TextView textViewId;
+    private ImageView imageView;
+    private int size;
+    private boolean picture;
+    private boolean onlyID;
+    private String Name;
+    private String Id;
 
-    public AutoCompleteAdapter(Context con, Cursor cur) {
+    public AutoCompleteAdapter(Context con, Cursor cur, boolean pic, boolean ID) {
         super(con, -1);
         cursor=cur;
         context=con;
+        picture = pic;
+        onlyID = ID;
     }
 
     @Override
@@ -37,16 +46,23 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
 
         cursor.moveToPosition(position);
 
-        String Name=cursor.getString(1);
-        String Id=cursor.getString(0);
+        if (!onlyID)
+            Name = cursor.getString(0);
+
+        else
+            Name = cursor.getString(1);
+            Id = cursor.getString(0);
 
         if (view != null) {
             textViewName = (TextView) view.findViewById(R.id.username);
             textViewId = (TextView) view.findViewById(R.id.userid);
+            imageView = (ImageView)view.findViewById(R.id.userPic);
         }
 
         textViewName.setText(Name);
         textViewId.setText(Id);
+        if (!picture)
+            imageView .setVisibility(View.INVISIBLE);//GONE
 
         return view;
     }
@@ -58,12 +74,17 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
             @Override
             protected FilterResults performFiltering(final CharSequence constraint) {
                 azIndexer = new HashMap<String, Integer>();
-                int size = cursor.getCount();
+                size = cursor.getCount();
                 for (int i=0;i< size ;  i++) {
                     cursor.moveToPosition(i);
                     String element = cursor.getString(1);
-                    assert element != null;
-                    azIndexer.put(element.substring(0, 1), i);
+
+                    String ch = null;
+                    if (element != null) {
+                        ch = element.substring(0, 1);
+                    }
+                    if (!azIndexer.containsKey(ch))
+                        azIndexer.put(ch, i);
                 }
 
                 Set<String> keys = azIndexer.keySet();
@@ -88,7 +109,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
 
                 final FilterResults filterResults = new FilterResults();
                 filterResults.values = addressList;
-                filterResults.count = addressList.size();
+                filterResults.count = size;
 
                 return filterResults;
             }
@@ -97,9 +118,16 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
             protected void publishResults(final CharSequence contraint, final FilterResults results) {
                 clear();
 
-                assert results.values != null;
+              /*  assert results.values != null;
                 for (String string : (List<String>) results.values) {
                     add(string);
+                }*/
+
+                List<String> string;
+                string = (List<String>) results.values;
+
+                for (int i = 0; i <size; i++){
+                    add(String.valueOf(string));
                 }
 
                 if (results.count > 0) {
