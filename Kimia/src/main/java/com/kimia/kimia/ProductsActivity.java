@@ -22,6 +22,7 @@ public class ProductsActivity extends ActionbarAdapter {
     private int selectedProductID;
     private Activity activity;
     private int addOrEdit = 1;
+    private int state = 0;
     private DBAdapter db;
 
     @Override
@@ -61,9 +62,10 @@ public class ProductsActivity extends ActionbarAdapter {
         setFragmentWeightEdit(true);
         if (changeFocus) productViewFragment.resetForAdd(false);
         addOrEdit = 2;
+        state = 2;
     }
 
-    public void setView(boolean scroll){
+    public void setView (boolean scroll) {
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         View v=getCurrentFocus();
 
@@ -78,27 +80,28 @@ public class ProductsActivity extends ActionbarAdapter {
 
         try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             selectedProductID = 0;
         }
 
-        if (selectedProductID > 0){
+        if (selectedProductID > 0) {
             setFragmentWeightEdit(false);
             actionbarSetView();
             //productsListFragment.setSelect(5);
-        }
-        else {
+        } else {
             setFragmentWeightEdit(true);
             actionbarSetEdit();
         }
+
+        state = 0;
     }
 
-    public void setAdd(){
+    public void setAdd() {
         actionbarSetEdit();
         setFragmentWeightEdit(true);
         productViewFragment.resetForAdd(true);
         addOrEdit = 1;
+        state = 1;
     }
 
     private void deleteProduct(){
@@ -106,13 +109,13 @@ public class ProductsActivity extends ActionbarAdapter {
         final View deleteDialogView = factory.inflate(R.layout.delete_dialog, null);
         final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
         deleteDialog.setView(deleteDialogView);
-        TextView textDialog = null;
+        TextView textDialog;
         if (deleteDialogView != null) {
             textDialog = (TextView) deleteDialogView.findViewById(R.id.txt_dialog);
             String name = null;
             Cursor c;
             db.open();
-            c = db.getProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+            c = db.getProduct(selectedProductID);
 
             if(c != null && c.moveToFirst())
                 name = c.getString(0);
@@ -124,7 +127,7 @@ public class ProductsActivity extends ActionbarAdapter {
                 @Override
                 public void onClick(View v) {
                     db.open();
-                    boolean c=db.deleteProduct(Long.parseLong(textSelectedProductID.getText().toString()));
+                    boolean c=db.deleteProduct(selectedProductID);
 
                     if (c){
                         Toast.makeText(activity, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
@@ -170,7 +173,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
             case R.id.ItemAccept:
 
-                switch (addOrEdit){
+                switch (addOrEdit) {
                     case 1:
                         if (productViewFragment.addProduct()){
                             setView(true);
@@ -195,5 +198,42 @@ public class ProductsActivity extends ActionbarAdapter {
         }
 
         return super.onOptionsItemSelected(Item);
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        outState.putInt("state", state);
+        selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
+        outState.putInt("selectedProductID",selectedProductID);
+        outState.putBundle("viewFragment", productViewFragment.saveState());
+    }
+
+    @Override
+    public void onRestoreInstanceState (Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedProductID = savedInstanceState.getInt("selectedProductID", 3);
+        textSelectedProductID.setText(String.valueOf(selectedProductID));
+        state = savedInstanceState.getInt("state", 0);
+
+        switch (state) {
+            case 0:
+                setView(true);
+                break;
+
+            case 1:
+                productsListFragment.showList();
+                productsListFragment.setScroll(true);
+                setAdd();
+                break;
+
+            case 2:
+                productsListFragment.showList();
+                productsListFragment.setScroll(true);
+                setEdit(false);
+                break;
+        }
+
+        productViewFragment.setState(savedInstanceState.getBundle("viewFragment"));
     }
 }

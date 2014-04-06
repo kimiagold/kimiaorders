@@ -12,13 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProductViewFragment extends Fragment implements View.OnFocusChangeListener {
+
+    private Bundle savedState = null;
 
     private AutoCompleteTextView textGroup;
     private AutoCompleteTextView textMaker;
@@ -52,7 +53,10 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_product_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_product_view, null);
+
+       // return inflater.inflate(R.layout.fragment_product_view, container, false);
+        return view;
     }
 
     /*******************************************On Attach******************************************/
@@ -150,11 +154,11 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /********************************************Check Edit****************************************/
 
-    public void checkFirsItem(){
+    public void checkFirsItem() {
         try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
         }
-        catch(Exception e) {
+        catch (Exception e) {
             selectedProductID = 0;
         }
 
@@ -224,21 +228,20 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Show Product********************************/
 
-    private void showProduct(){
+    private void showProduct() {
         isEdit = false;
         resetAllValidate();
 
-        try{
+        try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             selectedProductID = 0;
         }
 
         db.open();
         Cursor c=db.getProduct(selectedProductID);
 
-        if(c != null && c.moveToFirst()){
+        if (c != null && c.moveToFirst()) {
             selectedProductCod = Long.parseLong(c.getString(1));
             textGroup.setText(c.getString(5));
             textName.setText(c.getString(0));
@@ -427,9 +430,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             db.open();
             long max=  db.ProductMaxCod();
-
-            textCod.setText (Long.toString(max+1));
             db.close();
+            textCod.setText (Long.toString(max+1));
         }
 
         setFocus(textGroup);
@@ -521,5 +523,60 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 textName.setSelection(textName.getText().length());
             }
         });
+    }
+
+    /*************************************************Save state***********************************/
+
+    public Bundle saveState() { /* called either from onDestroyView() or onSaveInstanceState() */
+        Bundle outState = new Bundle();
+        outState.putString("textGroup", textGroup.getText().toString());
+        outState.putString("textName", textName.getText().toString());
+        outState.putString("textMaker", textMaker.getText().toString());
+        outState.putString("textCod", textCod.getText().toString());
+        outState.putString("textTip", textTip.getText().toString());
+
+        int viewId = activity.getCurrentFocus().getId();
+        outState.putInt("hasFocus", viewId);
+
+        int end;
+        int start;
+        try {
+            EditText editText = (EditText) activity.findViewById(viewId);
+            end = editText.getSelectionEnd();
+            start = editText.getSelectionStart();
+        } catch (Exception e) {
+            end = 0;
+            start = 0;
+        }
+
+        outState.putInt("selectionStart", start);
+        outState.putInt("selectionEnd", end);
+        return outState;
+    }
+
+    /*************************************************Restore state********************************/
+
+    public void setState(Bundle state){
+        savedState = state;
+        if(savedState != null){
+            textGroup.setText(savedState.getString("textGroup"));
+            textName.setText(savedState.getString("textName"));
+            textMaker.setText(savedState.getString("textMaker"));
+            textCod.setText(savedState.getString("textCod"));
+            textTip.setText(savedState.getString("textTip"));
+            int viewId = savedState.getInt("hasFocus");
+            int start = savedState.getInt("selectionStart");
+            int end = savedState.getInt("selectionEnd");
+
+            try {
+                EditText editText = (EditText) activity.findViewById(viewId);
+                setFocus(editText);
+                editText.setSelection(start, end);
+            } catch (Exception e) {
+                View view = activity.findViewById(viewId);
+                view.requestFocus();
+            }
+        }
+        savedState = null;
     }
 }

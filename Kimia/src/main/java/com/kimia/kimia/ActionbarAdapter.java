@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class ActionbarAdapter extends Activity{
 
@@ -13,9 +12,7 @@ public class ActionbarAdapter extends Activity{
     private MenuItem itemDelete;
     private MenuItem itemAccept;
     private MenuItem itemCancel;
-
-    private TextView textSelectedProductID;
-    private int selectedProductID;
+    public boolean stateEdit = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu Menu) {
@@ -29,45 +26,35 @@ public class ActionbarAdapter extends Activity{
         itemAccept = Menu.findItem(R.id.ItemAccept);
         itemCancel = Menu.findItem(R.id.ItemCancel);
 
-        textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
-
-        try {
-            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        }
-        catch(Exception e){
-            selectedProductID = 0;
-        }
-
-        if (selectedProductID > 0)
-            actionbarSetView();
-        else actionbarSetEdit();
+        if (stateEdit) actionbarSetEdit();
+        else actionbarSetView();
 
         return true;
     }
 
     public boolean actionbarSetEdit(){
-
+        stateEdit = true;
         if (itemAccept!=null){
             itemAdd.setVisible(false);
             itemEdit.setVisible(false);
             itemDelete.setVisible(false);
             itemAccept.setVisible(true);
             itemCancel.setVisible(true);
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     public boolean actionbarSetView(){
-
+        stateEdit = false;
         if (itemAccept!=null){
             itemAdd.setVisible(true);
             itemEdit.setVisible(true);
             itemDelete.setVisible(true);
             itemAccept.setVisible(false);
             itemCancel.setVisible(false);
+            return true;
         }
-
-        return true;
+        return false;
     }
 }

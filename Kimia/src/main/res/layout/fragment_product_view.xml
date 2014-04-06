@@ -41,7 +41,7 @@
                 android:paddingStart="20dp" />
 
             <com.kimia.kimia.InstantAutoComplete
-                android:layout_width="200dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditGroupID"
                 android:selectAllOnFocus="true"
@@ -50,7 +50,7 @@
             <com.kimia.kimia.InstantAutoComplete
                 android:layout_height="wrap_content"
                 android:id="@+id/ProductEditName"
-                android:layout_width="200dp"
+                android:layout_width="150dp"
                 android:textSize="25sp"
                 android:selectAllOnFocus="true"/>
 
