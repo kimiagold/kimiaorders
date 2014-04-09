@@ -15,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
-    HashMap<String, Integer> azIndexer;
+    //HashMap<String, Integer> azIndexer;
     String[] sections;
     private Context mContext;
     Cursor cursor;
@@ -29,13 +30,20 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
     View view1;
     ViewGroup parent1;
 
+    public LinkedHashMap<String, Integer> sectionList;
+    public HashMap<Integer,Integer> sectionPositions;
+    public HashMap<Integer,Integer> positionsForSection;
+
     public ListAdapter(Context context, Cursor cur) {
         super();
         mContext=context;
         cursor=cur;
-        azIndexer = new HashMap<String, Integer>();
+        sectionList = new LinkedHashMap<String, Integer>();
+        sectionPositions = new HashMap<Integer, Integer>();
+        positionsForSection = new HashMap<Integer, Integer>();
+        //azIndexer = new HashMap<String, Integer>();
 
-        int size = getCount();
+   /*     int size = getCount();
         for (int i = size - 1; i >= 0; i--) {
             cursor.moveToPosition(i);
             String element = cursor.getString(1);
@@ -43,11 +51,32 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
             if (element != null) {
                 ch = element.substring(0, 1);
             }
-            if (!azIndexer.containsKey(ch))
+            //if (!azIndexer.containsKey(ch))
                 azIndexer.put(ch, i);
+        }*/
+
+
+        if( cur != null && getCount() > 0 ) {
+            //Iterate through the contacts, take the first letter, uppercase it, and use that as a key to reference the alphabetised list constructed above.
+            for( int i = getCount()-1; i >= 0; i-- ) {
+
+                cursor.moveToPosition(i);
+                String element = cursor.getString(1);
+                String ch = null;
+                if (element != null)
+                    ch =element.substring(0, 1);
+
+                //if( ch != null ) {
+                    //if(!sectionList.containsValue(ch)) {
+                        sectionList.put(ch, i);
+                        positionsForSection.put(sectionList.size(), i);
+                    //}
+                //}
+                sectionPositions.put(i-1, 1);
+            }
         }
 
-        Set<String> keys = azIndexer.keySet();
+        Set<String> keys = sectionList.keySet();
         Iterator<String> it = keys.iterator();
         ArrayList<String> keyList = new ArrayList<String>(keys);
 
@@ -108,22 +137,37 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 //        ((ListView) parent1).setSelectionFromTop(position, top);
     }
 
-    public Object getItem(int position) {
-        return position;
-    }
 
     public long getItemId(int position) {
         return position;
     }
 
+    @Override
     public int getPositionForSection(int section) {
         String letter = sections[section];
-        return azIndexer.get(letter);
+        //return azIndexer.get(letter);
+        return sectionList.get(letter);
+        //return positionsForSection.get(section);
     }
 
+    @Override
     public int getSectionForPosition(int position) {
         Log.v("getSectionForPosition", "called");
-        return 0;
+        String letter = sections[position];
+        //return azIndexer.get(letter);
+        //return sectionList.get(letter);
+        return sectionPositions.get(position);
+        //return 0;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        if( getCount() > position ) {
+            //return locations.get(position);
+            return position;
+        }
+
+        return null;
     }
 
     public Object[] getSections() {

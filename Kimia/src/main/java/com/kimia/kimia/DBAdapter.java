@@ -1,5 +1,6 @@
 package com.kimia.kimia;
 
+import android.accounts.Account;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -296,7 +297,7 @@ public class DBAdapter {
 
         cursor = db.query(
                 true, ProductGroups,
-                new String[] {ProductGroupID, ProductGroupName},
+                new String[] {ProductGroupName},
                 ProductGroupName + " LIKE ?",
                 new String[] { filter + "%"},
                 null, null, ProductGroupName, null );
@@ -318,7 +319,7 @@ public class DBAdapter {
 
     public Cursor filterAccounts(String filter){
 
-        cursor = db.rawQuery("SELECT " + AccountID + ", " + AccountName
+        cursor = db.rawQuery("SELECT " + AccountName
                 + " FROM " + Accounts
                 + " WHERE " + AccountGroupID + " = 1 AND "
                 + AccountName + " LIKE '" + filter + "%'"
@@ -374,7 +375,7 @@ public class DBAdapter {
         int Max = 0;
         int r=0;
         Cursor m;
-        m = db.rawQuery("SELECT MAX("+ AccountID+ ") FROM "+Accounts, null);
+        m = db.rawQuery("SELECT MAX("+ AccountID+ ") FROM "+ Accounts, null);
         if(m.moveToFirst())
             do{
                 Max = m.getInt((0));
@@ -523,5 +524,44 @@ public class DBAdapter {
                 a=-4;
         }
         return a;
+    }
+
+    /******************************************************last product****************************/
+
+   /* public Cursor getProdkuct(long ID) throws SQLException{
+
+        cursor = db.rawQuery("SELECT "
+                + ProductName + ", "
+                + ProductCode + ", "
+                + ProductTip + ", "
+                + ProductIsVisible + ", "
+                + AccountName + ", "
+                + ProductGroupName
+                + " FROM " + Products
+                + " LEFT OUTER JOIN " + Accounts
+                + " ON " + Products + "." + ProductMaker + " = " + Accounts + "." + AccountID
+                + " LEFT OUTER JOIN " + ProductGroups
+                + " ON " + Products + "." + ProductGroupsID + " = " + ProductGroups + "." + ProductGroupID
+                + " WHERE " + ProductID + " = " + ID, null);
+
+        return cursor;
+    }
+"SELECT ProductGroup.Name, Account.Name"+
+        "FROM (ProductGroup INNER JOIN Product ON ProductGroup.ID = Product.GroupID) INNER JOIN Account ON Product.Maker = Account.ID\n"+
+        "WHERE (((Product.ID)=(SELECT MAX(Product.ID) FROM Product)));"
+
+    */
+   // WHERE (((Product.ID)=(SELECT MAX(Product.ID) FROM Product)));
+    public Cursor lastProduct() {
+        cursor = db.rawQuery("SELECT "
+                + ProductGroupName + ", "
+                + AccountName
+                + " FROM " + ProductGroups
+                + " INNER JOIN " + Products
+                + " ON " + ProductGroups + "." + ProductGroupID + " = " + Products + "." + ProductGroupsID
+                + " INNER JOIN " + Accounts
+                + " ON " + Products + "." + ProductMaker + " = " + Accounts + "." + AccountID
+                + " WHERE ((" + ProductID + ") = (SELECT MAX(" + ProductID + ") FROM " + Products + "))", null);
+        return cursor;
     }
 }

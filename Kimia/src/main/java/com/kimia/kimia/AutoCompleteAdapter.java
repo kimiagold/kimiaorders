@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
 
 public class AutoCompleteAdapter extends ArrayAdapter<String>{
 
@@ -30,12 +31,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
     private String Name;
     private String Id;
 
-    public AutoCompleteAdapter(Context con, Cursor cur, boolean pic, boolean ID) {
+    public AutoCompleteAdapter(Context con, Cursor cur, boolean pic) {
         super(con, -1);
         cursor=cur;
         context=con;
         picture = pic;
-        onlyID = ID;
     }
 
     @Override
@@ -45,13 +45,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
         view = inflater.inflate(R.layout.user_listitem, null);
 
         cursor.moveToPosition(position);
-
-        if (!onlyID)
-            Name = cursor.getString(0);
-
-        else
-            Name = cursor.getString(1);
-            Id = cursor.getString(0);
+        Name = cursor.getString(0);
 
         if (view != null) {
             textViewName = (TextView) view.findViewById(R.id.username);
@@ -74,7 +68,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
             @Override
             protected FilterResults performFiltering(final CharSequence constraint) {
                 azIndexer = new HashMap<String, Integer>();
-                size = cursor.getCount();
+                size = getCount();
                 for (int i=0;i< size ;  i++) {
                     cursor.moveToPosition(i);
                     String element = cursor.getString(1);
@@ -139,5 +133,11 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
                 }
             }
         };
+    }
+
+    @Override
+    public int getCount() {
+        //return cursor.getCount();
+        return Math.min(20, cursor.getCount());
     }
 }

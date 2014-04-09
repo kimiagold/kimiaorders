@@ -132,7 +132,7 @@ public class ProductsListFragment extends Fragment {
             scrollY = (itemPosition - firstScroll-1)*h + t;
         }
 
-        listView.setSelectionFromTop(itemPosition,scrollY);
+        listView.setSelectionFromTop(itemPosition, scrollY);
     }
 
     @Override
