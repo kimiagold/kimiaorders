@@ -64,6 +64,7 @@ public class UsershowActivity extends Fragment implements CompoundButton.OnCheck
         DBAdapter db = new DBAdapter(getActivity());
         db.open();
         Cursor c=db.getAc(ID);
+        int aaaa = db.getMakerRank(ID);
         if(c != null && c.moveToFirst()){
             groupS =(Spinner)getActivity().findViewById(R.id.spinnergroup);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, group);
@@ -75,7 +76,7 @@ public class UsershowActivity extends Fragment implements CompoundButton.OnCheck
             mob.setText(c.getString(5));
             fax.setText(c.getString(6));
             cod.setText(c.getString(3));
-            tip.setText(c.getString(7));
+            tip.setText(String.valueOf(aaaa));
 
             if(c.getString(8).equals( "1" ))
                 pre.setChecked(true);

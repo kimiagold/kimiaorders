@@ -18,8 +18,8 @@ public class ProductsActivity extends ActionbarAdapter {
 
     private ProductViewFragment productViewFragment;
     private ProductsListFragment productsListFragment;
-    private TextView textSelectedProductID;
-    private int selectedProductID;
+   // private TextView textSelectedProductID;
+    private long selectedProductID = 0;
     private Activity activity;
     private int addOrEdit = 1;
     private int state = 0;
@@ -33,7 +33,7 @@ public class ProductsActivity extends ActionbarAdapter {
         activity = this;
         productViewFragment = (ProductViewFragment) getFragmentManager().findFragmentById(R.id.ProductsViewFragment);
         productsListFragment = (ProductsListFragment) getFragmentManager().findFragmentById(R.id.ProductsListFragment);
-        textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
+      //  textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
         db = new DBAdapter(this);
         /*
         ProductViewFragment fragment1 = new ProductViewFragment();
@@ -42,6 +42,14 @@ public class ProductsActivity extends ActionbarAdapter {
         ProductsListFragment fragment = new ProductsListFragment();
         getFragmentManager().beginTransaction().add(R.id.ProductsListFragment, fragment).commit();
         */
+    }
+
+    public void setSelectedProductID(long id){
+        selectedProductID = id;
+    }
+
+    public long getSelectedProductID(){
+        return selectedProductID;
     }
 
     public void setFragmentWeightEdit(boolean b){
@@ -78,33 +86,36 @@ public class ProductsActivity extends ActionbarAdapter {
         productsListFragment.showList();
         productsListFragment.setScroll(scroll);
 
-        try {
+        /*try {
             selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
         } catch (Exception e) {
             selectedProductID = 0;
-        }
+        }*/
 
         if (selectedProductID > 0) {
             setFragmentWeightEdit(false);
             actionbarSetView();
             //productsListFragment.setSelect(5);
         } else {
-            setFragmentWeightEdit(true);
-            actionbarSetEdit();
+            setAdd(true);
         }
 
         state = 0;
     }
 
-    public void setAdd() {
+    public void setAdd(boolean firstItem) {
         actionbarSetEdit();
         setFragmentWeightEdit(true);
-        productViewFragment.resetForAdd(true);
+        if (!firstItem) productViewFragment.resetForAdd(true);
         addOrEdit = 1;
         state = 1;
     }
 
     private void deleteProduct(){
+        String name = null;
+        long groupID = 0;
+        long makerID = 0;
+        state = 3;
         LayoutInflater factory = LayoutInflater.from(this);
         final View deleteDialogView = factory.inflate(R.layout.delete_dialog, null);
         final AlertDialog deleteDialog = new AlertDialog.Builder(this).create();
@@ -112,17 +123,21 @@ public class ProductsActivity extends ActionbarAdapter {
         TextView textDialog;
         if (deleteDialogView != null) {
             textDialog = (TextView) deleteDialogView.findViewById(R.id.txt_dialog);
-            String name = null;
             Cursor c;
             db.open();
-            c = db.getProduct(selectedProductID);
+            c = db.getDeleteProduct(selectedProductID);
 
-            if(c != null && c.moveToFirst())
-                name = c.getString(0);
+            if(c != null && c.moveToFirst()){
+                groupID = c.getLong(0);
+                makerID = c.getLong(1);
+                name = c.getString(2);
+            }
 
             db.close();
 
             textDialog.setText(name + " " + getString(R.string.Deleted_Q));
+            final long finalGroupID = groupID;
+            final long finalMakerID = makerID;
             deleteDialogView.findViewById(R.id.delete_yes).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,6 +146,8 @@ public class ProductsActivity extends ActionbarAdapter {
 
                     if (c){
                         Toast.makeText(activity, getString(R.string.deleted),Toast.LENGTH_SHORT).show();
+                        db.minusGroup(finalGroupID);
+                        db.minusMaker(finalMakerID);
                         productsListFragment.setNextItem();
                         setView(false);
                     }
@@ -160,7 +177,7 @@ public class ProductsActivity extends ActionbarAdapter {
         switch (Item.getItemId()) {
 
             case R.id.ItemAdd:
-                setAdd();
+                setAdd(false);
                 break;
 
             case R.id.ItemEdit:
@@ -190,7 +207,9 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemCancel:
-                setView(true);
+                if (selectedProductID == 0)
+                    finish();
+                else setView(true);
                 break;
 
             default:
@@ -203,8 +222,8 @@ public class ProductsActivity extends ActionbarAdapter {
     @Override
     public void onSaveInstanceState (Bundle outState) {
         outState.putInt("state", state);
-        selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        outState.putInt("selectedProductID",selectedProductID);
+        //selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
+        outState.putLong("selectedProductID", selectedProductID);
         outState.putBundle("viewFragment", productViewFragment.saveState());
     }
 
@@ -212,8 +231,8 @@ public class ProductsActivity extends ActionbarAdapter {
     public void onRestoreInstanceState (Bundle savedInstanceState) {
 
         super.onRestoreInstanceState(savedInstanceState);
-        selectedProductID = savedInstanceState.getInt("selectedProductID", 3);
-        textSelectedProductID.setText(String.valueOf(selectedProductID));
+        selectedProductID = savedInstanceState.getLong("selectedProductID", 0);
+        //textSelectedProductID.setText(String.valueOf(selectedProductID));
         state = savedInstanceState.getInt("state", 0);
 
         switch (state) {
@@ -224,13 +243,17 @@ public class ProductsActivity extends ActionbarAdapter {
             case 1:
                 productsListFragment.showList();
                 productsListFragment.setScroll(true);
-                setAdd();
+                setAdd(false);
                 break;
 
             case 2:
                 productsListFragment.showList();
                 productsListFragment.setScroll(true);
                 setEdit(false);
+                break;
+
+            case 3:
+                deleteProduct();
                 break;
         }
 

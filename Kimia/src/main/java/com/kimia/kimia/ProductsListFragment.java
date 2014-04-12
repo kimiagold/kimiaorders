@@ -1,5 +1,6 @@
 package com.kimia.kimia;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
@@ -21,12 +22,13 @@ public class ProductsListFragment extends Fragment {
     Cursor cursor;
     ListAdapter listAdapter;
     Context context;
-    private TextView textSelectedProductID;
+    //private TextView textSelectedProductID;
     private ArrayList<Long> itemID;
     DBAdapter db;
     int i=0;
     private int firstScroll;
     private int itemPosition;
+    private ProductsActivity productsActivity;
     View c;
 
     @Override
@@ -37,23 +39,26 @@ public class ProductsListFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        textSelectedProductID = (TextView) getActivity().findViewById(R.id.SelectedProductID);
+        //textSelectedProductID = (TextView) getActivity().findViewById(R.id.SelectedProductID);
         db = new DBAdapter(getActivity());
         context = getActivity();
         listView = (ListView) getActivity().findViewById(R.id.listView);
+        productsActivity = (ProductsActivity)getActivity();
 
         db.open();
         super.onResume();
         cursor = db.getAllProductName();
 
         if(cursor != null && cursor.moveToFirst()){
-            textSelectedProductID.setText(cursor.getString(0));
+            productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
         } else {
-            textSelectedProductID.setText("0");
-            ((ProductsActivity)getActivity()).setFragmentWeightEdit(true);
+            productsActivity.setSelectedProductID(0);
+            //productsActivity.setFragmentWeightEdit(true);
+            //productsActivity.actionbarSetEdit();
+            productsActivity.setAdd(true);
         }
-
         showList();
+        //productsActivity.setView(false);
     }
 
     public void showList() {
@@ -82,11 +87,11 @@ public class ProductsListFragment extends Fragment {
                 TextView textViewId=(TextView)v.findViewById(R.id.userid);
                 String ID;
                 ID=textViewId.getText().toString();
-                textSelectedProductID.setText(ID);
+                productsActivity.setSelectedProductID(Long.parseLong(ID));
                 setSelect(position);
                 firstScroll = listView.getFirstVisiblePosition();
                 c = listView.getChildAt(1);
-                ((ProductsActivity)getActivity()).setView(false);
+                productsActivity.setView(false);
             }
         });
     }
@@ -102,8 +107,12 @@ public class ProductsListFragment extends Fragment {
 
         db.open();
         cursor = db.getAllProductName();
-        cursor.moveToPosition(itemPosition);
-        textSelectedProductID.setText(cursor.getString(0));
+        if (cursor.moveToPosition(itemPosition))
+            productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
+        else {
+            productsActivity.setSelectedProductID(0);
+          //  productsActivity.setAdd(true);
+        }
         db.close();
     }
 
@@ -120,8 +129,7 @@ public class ProductsListFragment extends Fragment {
 
     public void setScroll(boolean scroll) {
         listAdapter.notifyDataSetChanged();
-        String a = textSelectedProductID.getText().toString();
-        long i = Long.parseLong(a);
+        long i = productsActivity.getSelectedProductID();
         itemPosition = getItemPosition(i);
         setSelect(itemPosition);
         int scrollY = 0;

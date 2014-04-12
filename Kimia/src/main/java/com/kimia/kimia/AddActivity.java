@@ -175,7 +175,7 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
                 if (na != null && !na.isEmpty()){
 
                     if (co!=-1){
-                        id = db.insertAc(groupI,co , na,te,mo,fa,pre,ti,visi);
+                        id = db.insertAc(groupI,co , na,te,mo,fa,pre,ti,visi, 0);
                         db.close();
 
                         if (id>0){
@@ -235,7 +235,7 @@ public class AddActivity extends Activity implements CompoundButton.OnCheckedCha
         if (na != null && !na.isEmpty()){
 
             if (co!=-1){
-                id = db.insertAc(groupI,co,na,te,mo,fa,pre,ti,visi);
+                id = db.insertAc(groupI,co,na,te,mo,fa,pre,ti,visi, 0);
                 db.close();
 
                 if (id>0){

@@ -14,7 +14,7 @@ public class DBAdapter {
     private Cursor cursor;
     private static final String TAG = "DBAdapter";
     private static final String DATABASE_NAME = "kimia-db";
-    private static final int DATABASE_VERSION = 87;
+    private static final int DATABASE_VERSION = 90;
     private final Context context;
     private DatabaseHelper DBHelper;
     private SQLiteDatabase db;
@@ -33,6 +33,7 @@ public class DBAdapter {
     private static final String AccountTip = "AccountTip";
     private static final String AccountVisible = "AccountVisible";
     private static final String AccountImage = "AccountImage";
+    private static final String AccountRank = "AccountRank";
 
     private static final String CreateTableAccounts = "CREATE TABLE " + Accounts + " ("
             + AccountID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -45,17 +46,20 @@ public class DBAdapter {
             + AccountPreference + " BLOB, "
             + AccountTip + " TEXT, "
             + AccountVisible + " BLOB, "
-            + AccountImage + " Text);";
+            + AccountImage + " Text, "
+            + AccountRank + " INTEGER);";
 
     /*************************************************Table Product Groups*************************/
 
     private static final String ProductGroups = "ProductGroups";
     private static final String ProductGroupID = "ProductGroupID";
     private static final String ProductGroupName = "ProductGroupName";
+    private static final String ProductGroupRank = "ProductGroupRank";
 
     private static final String CreateTableProductGroups = "CREATE TABLE " + ProductGroups + " ("
             + ProductGroupID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + ProductGroupName + " TEXT NOT NULL UNIQUE);";
+            + ProductGroupName + " TEXT NOT NULL UNIQUE, "
+            + ProductGroupRank + " INTEGER);";
 
     /*************************************************Table Factors********************************/
 
@@ -186,7 +190,7 @@ public class DBAdapter {
                 db.execSQL(CreateTableProducts);
                 //db.execSQL(CreateTableFactors);
                 //db.execSQL(CreateTableOrders);
-            }catch ( SQLException e){
+            } catch ( SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -223,7 +227,7 @@ public class DBAdapter {
         return Max;
     }
 
-    public long insertAc(long grupId, long cod, String accNA, String tel, String mob, String fax, boolean ispre, String tip,boolean isvisi ){
+    public long insertAc(long grupId, long cod, String accNA, String tel, String mob, String fax, boolean ispre, String tip,boolean isvisi, int rank){
         ContentValues initialValues = new ContentValues();
         initialValues.put(AccountGroupID, grupId);
         initialValues.put(AccountCode, cod);
@@ -234,6 +238,7 @@ public class DBAdapter {
         initialValues.put(AccountPreference, ispre);
         initialValues.put(AccountTip, tip);
         initialValues.put(AccountVisible, isvisi);
+        initialValues.put(AccountRank, rank);
         long a;
 
         try {
@@ -300,7 +305,7 @@ public class DBAdapter {
                 new String[] {ProductGroupName},
                 ProductGroupName + " LIKE ?",
                 new String[] { filter + "%"},
-                null, null, ProductGroupName, null );
+                null, null, ProductGroupRank + " DESC", "5" );
 
         return cursor;
     }
@@ -312,7 +317,7 @@ public class DBAdapter {
         cursor = db.rawQuery("SELECT DISTINCT " + ProductName
                 + " FROM " + Products
                 + " WHERE " + ProductName + " LIKE '" + filter + "%'"
-                + " ORDER BY " + ProductName + ";", null);
+                + " ORDER BY " + ProductName + " LIMIT 5;", null);
         return cursor;
     }
     /**************************************************Filter Accounts*****************************/
@@ -323,7 +328,7 @@ public class DBAdapter {
                 + " FROM " + Accounts
                 + " WHERE " + AccountGroupID + " = 1 AND "
                 + AccountName + " LIKE '" + filter + "%'"
-                + " ORDER BY " + AccountName + ";", null);
+                + " ORDER BY " + AccountRank + " DESC LIMIT 5;", null);
         return cursor;
     }
 
@@ -333,6 +338,7 @@ public class DBAdapter {
         int a;
         ContentValues initialValues = new ContentValues();
         initialValues.put(ProductGroupName, name);
+        initialValues.put(ProductGroupRank, 0);
 
         try {
             a = (int) db.insert(ProductGroups, null, initialValues);
@@ -474,7 +480,10 @@ public class DBAdapter {
 
     public String getMaker(int rowId) throws SQLException{
 
-        cursor = db.rawQuery("SELECT " + AccountName + "  FROM " + Accounts + " WHERE " + AccountID + " = " + rowId + " ;", null);
+        cursor = db.rawQuery("SELECT "
+                + AccountName
+                + " FROM " + Accounts
+                + " WHERE " + AccountID + " = " + rowId + ";", null);
 
         if(cursor.moveToFirst())
             return cursor.getString((0));
@@ -528,30 +537,6 @@ public class DBAdapter {
 
     /******************************************************last product****************************/
 
-   /* public Cursor getProdkuct(long ID) throws SQLException{
-
-        cursor = db.rawQuery("SELECT "
-                + ProductName + ", "
-                + ProductCode + ", "
-                + ProductTip + ", "
-                + ProductIsVisible + ", "
-                + AccountName + ", "
-                + ProductGroupName
-                + " FROM " + Products
-                + " LEFT OUTER JOIN " + Accounts
-                + " ON " + Products + "." + ProductMaker + " = " + Accounts + "." + AccountID
-                + " LEFT OUTER JOIN " + ProductGroups
-                + " ON " + Products + "." + ProductGroupsID + " = " + ProductGroups + "." + ProductGroupID
-                + " WHERE " + ProductID + " = " + ID, null);
-
-        return cursor;
-    }
-"SELECT ProductGroup.Name, Account.Name"+
-        "FROM (ProductGroup INNER JOIN Product ON ProductGroup.ID = Product.GroupID) INNER JOIN Account ON Product.Maker = Account.ID\n"+
-        "WHERE (((Product.ID)=(SELECT MAX(Product.ID) FROM Product)));"
-
-    */
-   // WHERE (((Product.ID)=(SELECT MAX(Product.ID) FROM Product)));
     public Cursor lastProduct() {
         cursor = db.rawQuery("SELECT "
                 + ProductGroupName + ", "
@@ -562,6 +547,99 @@ public class DBAdapter {
                 + " INNER JOIN " + Accounts
                 + " ON " + Products + "." + ProductMaker + " = " + Accounts + "." + AccountID
                 + " WHERE ((" + ProductID + ") = (SELECT MAX(" + ProductID + ") FROM " + Products + "))", null);
+        return cursor;
+    }
+
+    /**********************************************************************************************/
+
+    public void plusMaker(long id) {
+        int rank;
+        cursor = db.rawQuery("SELECT "
+                + AccountRank
+                + " FROM " + Accounts
+                + " WHERE " + AccountID + " = " + id + ";", null);
+        cursor.moveToFirst();
+        rank = cursor.getInt(0);
+        rank++;
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(AccountRank, rank);
+        db.update(Accounts, initialValues, AccountID + "=" + id, null);
+    }
+
+    /**********************************************************************************************/
+
+    public int getMakerRank(long id){
+        cursor = db.rawQuery("SELECT "
+                + AccountRank
+                + " FROM " + Accounts
+                + " WHERE " + AccountID + " = " + id + ";", null);
+
+        int a=0;
+        if(cursor.moveToFirst())
+            a = cursor.getInt(0);
+
+        return a;
+    }
+
+    /**********************************************************************************************/
+
+    public void plusGroup(long id) {
+        int rank;
+        cursor = db.rawQuery("SELECT "
+                + ProductGroupRank
+                + " FROM " + ProductGroups
+                + " WHERE " + ProductGroupID + " = " + id + ";", null);
+        cursor.moveToFirst();
+        rank = cursor.getInt(0);
+        rank++;
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(ProductGroupRank, rank);
+        db.update(ProductGroups, initialValues, ProductGroupID + "=" + id, null);
+    }
+
+    /**********************************************************************************************/
+
+    public void minusGroup(long id) {
+        int rank;
+        cursor = db.rawQuery("SELECT "
+                + ProductGroupRank
+                + " FROM " + ProductGroups
+                + " WHERE " + ProductGroupID + " = " + id + ";", null);
+        cursor.moveToFirst();
+        rank = cursor.getInt(0);
+        rank--;
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(ProductGroupRank, rank);
+        db.update(ProductGroups, initialValues, ProductGroupID + "=" + id, null);
+    }
+
+    /**********************************************************************************************/
+
+    public void minusMaker(long id) {
+        int rank;
+        cursor = db.rawQuery("SELECT "
+                + AccountRank
+                + " FROM " + Accounts
+                + " WHERE " + AccountID + " = " + id + ";", null);
+        cursor.moveToFirst();
+        rank = cursor.getInt(0);
+        rank--;
+
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(AccountRank, rank);
+        db.update(Accounts, initialValues, AccountID + "=" + id, null);
+    }
+
+    /**********************************************************************************************/
+
+    public Cursor getDeleteProduct (long id) {
+        cursor = db.rawQuery("SELECT "
+                + ProductGroupsID + ", " + ProductMaker + ", " + ProductName
+                + " FROM " + Products
+                + " WHERE " + ProductID + " = " + id + ";", null);
         return cursor;
     }
 }

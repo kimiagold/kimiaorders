@@ -52,7 +52,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private Activity activity;
 
     private long selectedProductID;
-    private TextView textSelectedProductID;
+    //private TextView textSelectedProductID;
     private ProductsActivity productsActivity;
     private ValidateAdapter validateAdapter;
 
@@ -91,7 +91,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             textCod = (EditText) activity.findViewById(R.id.ProductEditCod);
             textTip = (EditText) activity.findViewById(R.id.ProductEditTip);
-            textSelectedProductID = (TextView) activity.findViewById(R.id.SelectedProductID);
+            //textSelectedProductID = (TextView) activity.findViewById(R.id.SelectedProductID);
 
             db = new DBAdapter(activity);
             //context = activity;
@@ -160,12 +160,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /********************************************Check Edit****************************************/
 
     public void checkFirsItem() {
-        try {
-            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        }
-        catch (Exception e) {
-            selectedProductID = 0;
-        }
+        selectedProductID = productsActivity.getSelectedProductID();
 
         if (selectedProductID > 0) {
             showProduct();
@@ -236,12 +231,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private void showProduct() {
         isEdit = false;
         resetAllValidate();
-
-        try {
-            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        } catch(Exception e) {
-            selectedProductID = 0;
-        }
+        selectedProductID = productsActivity.getSelectedProductID();
 
         db.open();
         Cursor c=db.getProduct(selectedProductID);
@@ -315,13 +305,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
 
 
-
-
-
-
-
-
-
             db.open();
             groupsID = db.getProductsGroupID(groups);
             makerID = db.getAccountsNameID(maker);
@@ -332,18 +315,20 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             if (makerID < 0 ){
                 long makerCod = db.MaxCod();
-                makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
+                makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true, 0);
             }
 
             long id;
             id = db.insertProduct(longCod, groupsID, name, makerID, true, tip);
+            db.plusMaker(makerID);
+            db.plusGroup(groupsID);
             db.close();
             //}
             //db.close();
 
             if (id > 0){
                 Toast.makeText(activity, name + ' ' + getString(R.string.registred), Toast.LENGTH_SHORT).show();
-                textSelectedProductID.setText(Long.toString(id));
+                productsActivity.setSelectedProductID(id);
                 resetAllValidate();
                 return true;
 
@@ -418,15 +403,44 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             if (makerID < 0 ){
                 long makerCod = db.MaxCod();
-                makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true);
+                makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true, 0);
+            }
+
+            long gID1 = 0;
+            long mID1 = 0;
+            long mID = 0;
+            long gID = 0;
+
+            Cursor c = db.getDeleteProduct(selectedProductID);
+            if (c != null && c.moveToFirst()) {
+                gID = c.getLong(0);
+                mID = c.getLong(1);
             }
 
             long id;
             id = db.updateProduct(selectedProductID, longCod, groupsID, name, makerID, true, tip);
+
+            Cursor c1 = db.getDeleteProduct(selectedProductID);
+            if (c1 != null && c1.moveToFirst()) {
+                gID1 = c1.getLong(0);
+                mID1 = c1.getLong(1);
+            }
             db.close();
 
             if (id > 0){
                 Toast.makeText(activity, name + ' ' + getString(R.string.Edited), Toast.LENGTH_SHORT).show();
+
+                db.open();
+                if (gID != gID1) {
+                    db.minusGroup(gID);
+                    db.plusGroup(gID1);
+                }
+
+                if (mID != mID1) {
+                    db.minusMaker(mID);
+                    db.plusMaker(mID1);
+                }
+                db.close();
                 //textSelectedProductID.setText(Long.toString(id));
                 resetAllValidate();
                 return true;
