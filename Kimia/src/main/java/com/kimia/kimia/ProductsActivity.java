@@ -3,8 +3,10 @@ package com.kimia.kimia;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,8 +63,9 @@ public class ProductsActivity extends ActionbarAdapter {
 
         LinearLayout layout= (LinearLayout) findViewById(R.id.ProductsList);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, weight);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, weight);
         layout.setLayoutParams(params);
+
     }
 
     public void setEdit(boolean changeFocus){
@@ -71,6 +74,7 @@ public class ProductsActivity extends ActionbarAdapter {
         if (changeFocus) productViewFragment.resetForAdd(false);
         addOrEdit = 2;
         state = 2;
+        productViewFragment.setAddOrEdit(true);
     }
 
     public void setView (boolean scroll) {
@@ -91,6 +95,7 @@ public class ProductsActivity extends ActionbarAdapter {
         } catch (Exception e) {
             selectedProductID = 0;
         }*/
+        state = 0;
 
         if (selectedProductID > 0) {
             setFragmentWeightEdit(false);
@@ -99,8 +104,6 @@ public class ProductsActivity extends ActionbarAdapter {
         } else {
             setAdd(true);
         }
-
-        state = 0;
     }
 
     public void setAdd(boolean firstItem) {
@@ -109,9 +112,10 @@ public class ProductsActivity extends ActionbarAdapter {
         if (!firstItem) productViewFragment.resetForAdd(true);
         addOrEdit = 1;
         state = 1;
+        productViewFragment.setAddOrEdit(false);
     }
 
-    private void deleteProduct(){
+    private void deleteProduct() {
         String name = null;
         long groupID = 0;
         long makerID = 0;
@@ -258,5 +262,13 @@ public class ProductsActivity extends ActionbarAdapter {
         }
 
         productViewFragment.setState(savedInstanceState.getBundle("viewFragment"));
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (state == 0)
+            finish();
+        else setView(true);
     }
 }

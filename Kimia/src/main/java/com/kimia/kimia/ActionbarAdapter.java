@@ -10,6 +10,7 @@ public class ActionbarAdapter extends Activity{
     private MenuItem itemAdd;
     private MenuItem itemEdit;
     private MenuItem itemDelete;
+    private MenuItem itemSearch;
     private MenuItem itemAccept;
     private MenuItem itemCancel;
     public boolean stateEdit = false;
@@ -23,6 +24,7 @@ public class ActionbarAdapter extends Activity{
         itemAdd = Menu.findItem(R.id.ItemAdd);
         itemEdit = Menu.findItem(R.id.ItemEdit);
         itemDelete = Menu.findItem(R.id.ItemDelete);
+        itemSearch = Menu.findItem(R.id.ItemSearch);
         itemAccept = Menu.findItem(R.id.ItemAccept);
         itemCancel = Menu.findItem(R.id.ItemCancel);
 
@@ -38,6 +40,7 @@ public class ActionbarAdapter extends Activity{
             itemAdd.setVisible(false);
             itemEdit.setVisible(false);
             itemDelete.setVisible(false);
+            itemSearch.setVisible(false);
             itemAccept.setVisible(true);
             itemCancel.setVisible(true);
             return true;
@@ -51,6 +54,7 @@ public class ActionbarAdapter extends Activity{
             itemAdd.setVisible(true);
             itemEdit.setVisible(true);
             itemDelete.setVisible(true);
+            itemSearch.setVisible(true);
             itemAccept.setVisible(false);
             itemCancel.setVisible(false);
             return true;

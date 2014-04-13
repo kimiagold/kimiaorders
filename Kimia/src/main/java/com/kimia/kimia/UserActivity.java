@@ -61,7 +61,7 @@ public class UserActivity extends Fragment{
 
         if(cur != null && cur.moveToFirst()){
             id.setText(cur.getString(0));
-            userlistAdapter=new ListAdapter(getActivity(), cur);
+            userlistAdapter=new ListAdapter(getActivity(), cur, false);
             listac.setFastScrollAlwaysVisible(true);
             listac.setAdapter(userlistAdapter);
         }
@@ -71,7 +71,7 @@ public class UserActivity extends Fragment{
         listac.setOnItemClickListener(new OnItemClickListener(){
 
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3){
-                TextView textViewId=(TextView)v.findViewById(R.id.userid);
+                TextView textViewId=(TextView)v.findViewById(R.id.id);
                 String ID;
                 ID=textViewId.getText().toString();
                 id.setText(ID);

@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
 
 public class AutoCompleteAdapter extends ArrayAdapter<String>{
 
@@ -24,6 +23,7 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
     private Cursor cursor;
     private TextView textViewName;
     private TextView textViewId;
+    //private TextView textViewGroup;
     private ImageView imageView;
     private int size;
     private boolean picture;
@@ -42,21 +42,24 @@ public class AutoCompleteAdapter extends ArrayAdapter<String>{
     public View getView(int position, View view, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate(R.layout.user_listitem, null);
+        view = inflater.inflate(R.layout.listitem, null);
 
         cursor.moveToPosition(position);
         Name = cursor.getString(0);
 
         if (view != null) {
-            textViewName = (TextView) view.findViewById(R.id.username);
-            textViewId = (TextView) view.findViewById(R.id.userid);
-            imageView = (ImageView)view.findViewById(R.id.userPic);
+            textViewName = (TextView) view.findViewById(R.id.name);
+            textViewId = (TextView) view.findViewById(R.id.id);
+            //textViewGroup = (TextView) view.findViewById(R.id.group);
+            imageView = (ImageView)view.findViewById(R.id.pic);
         }
 
         textViewName.setText(Name);
         textViewId.setText(Id);
+        //textViewGroup.setVisibility(View.GONE);
+
         if (!picture)
-            imageView .setVisibility(View.INVISIBLE);//GONE
+            imageView.setVisibility(View.GONE);//GONE  INVISIBLE
 
         return view;
     }

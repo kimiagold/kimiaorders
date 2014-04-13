@@ -72,8 +72,9 @@ public class ProductsListFragment extends Fragment {
             itemID.add(Long.parseLong(cursor.getString(0)));
         }
 
-        listAdapter = new ListAdapter(getActivity(), cursor);
+        listAdapter = new ListAdapter(getActivity(), cursor, true);
        // listView.setFastScrollAlwaysVisible(true);
+       // listView.setFastScrollEnabled(true);
         listView.setAdapter(listAdapter);
         listView.setSmoothScrollbarEnabled(true);
 
@@ -84,7 +85,7 @@ public class ProductsListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3){
-                TextView textViewId=(TextView)v.findViewById(R.id.userid);
+                TextView textViewId=(TextView)v.findViewById(R.id.id);
                 String ID;
                 ID=textViewId.getText().toString();
                 productsActivity.setSelectedProductID(Long.parseLong(ID));

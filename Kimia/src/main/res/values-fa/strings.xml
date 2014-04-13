@@ -24,7 +24,7 @@
     <string name="error" >خطایی رخ داده است.</string>
     <string name="error_cod_number" >کد باید عدد باشد.</string>
     <string name="error_name" >نام نمی‌تواند خالی باشد.</string>
-    <string name="search">جست‌وجو</string>
+    <string name="Search">جست‌وجو</string>
     <string name="Edit">اصلاح</string>
     <string name="reset">دوباره</string>
     <string name="Products">اجناس</string>

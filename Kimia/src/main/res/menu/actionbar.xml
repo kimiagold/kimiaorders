@@ -17,6 +17,14 @@
         android:title="@string/Accept"/>
 
     <item
+        android:id="@+id/ItemSearch"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/Search"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView"/>
+
+    <item
         android:id="@+id/ItemDelete"
         android:orderInCategory="100"
         android:showAsAction="always"

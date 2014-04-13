@@ -371,7 +371,17 @@ public class DBAdapter {
     /************************************************Get All Products Name*************************/
 
     public Cursor getAllProductName(){
-        cursor = db.query(Products, new String[]{ProductID, ProductName}, null, null, null, null , ProductName);
+       // cursor = db.query(Products, new String[]{ProductID, ProductName, P}, null, null, null, null , ProductName);
+
+        cursor = db.rawQuery("SELECT "
+                + ProductID + ", "
+                + ProductName + ", "
+                + ProductGroupName
+                + " FROM " + Products
+                + " LEFT OUTER JOIN " + ProductGroups
+                + " ON " + Products + "." + ProductGroupsID + " = " + ProductGroups + "." + ProductGroupID
+                + " ORDER BY " + ProductName, null);
+
         return cursor;
     }
 
@@ -399,7 +409,9 @@ public class DBAdapter {
     }
 
     public Cursor getAc(long rowId) throws SQLException{
-        Cursor mCursor = db.query(true,Accounts, new String[] {AccountID,AccountName,AccountGroupID,AccountCode ,AccountTelephone, AccountMobile, AccountFax, AccountTip, AccountPreference, AccountVisible}, AccountID + "=" + rowId, null, null, null, null, null);
+        Cursor mCursor = db.query(true,Accounts, new String[] {AccountID,AccountName,AccountGroupID,AccountCode ,AccountTelephone,
+                AccountMobile, AccountFax, AccountTip, AccountPreference, AccountVisible},
+                AccountID + "=" + rowId, null, null, null, null, null);
         if (mCursor != null){
             mCursor.moveToFirst();
         }

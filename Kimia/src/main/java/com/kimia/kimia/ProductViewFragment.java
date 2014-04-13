@@ -23,8 +23,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     private Bundle savedState = null;
 
-
-    private static final String ALLOWED_CHARACTERS ="ضصثقفغعهخحجچچگکمنتالبیسشظطزرذدپو.۱۲۳۴۵۶۷۸۹۰";
+    private static final String ALLOWED_CHARACTERS ="ضصثقفغعهخحجچگکمنتالبیسشظطزرذدپو";
 
     private AutoCompleteTextView textGroup;
     private AutoCompleteTextView textMaker;
@@ -40,6 +39,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     private boolean isEdit = false;
     private boolean onFocusForEdit;
+    private boolean addOrEdit = false;
 
     private String cod;
     private long groupsID;
@@ -57,7 +57,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private ValidateAdapter validateAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container ,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_product_view, null);
 
        // return inflater.inflate(R.layout.fragment_product_view, container, false);
@@ -112,7 +112,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textMaker.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isEdit){
+                if (isEdit) {
                     showMakersList();
                 }
             }
@@ -128,7 +128,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isEdit){
+                if (isEdit) {
                     showProductsGroupList();
                 }
             }
@@ -144,7 +144,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (isEdit){
+                if (isEdit) {
                     showNameList();
                 }
             }
@@ -199,20 +199,82 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if (view == textName && b && textName.getText().toString().trim().length() > 0)
             textName.dismissDropDown();
 
-        if (view == textGroup && !b)
+        if (view == textGroup && !b) {
+            if (textGroup.getText().toString().trim().length() == 0) {
+                Cursor c;
+                String temp = null;
+                db.open();
+                if (addOrEdit) {
+                    c = db.getProduct(selectedProductID);
+                    if (c != null && c.moveToFirst())
+                        temp = c.getString(5);
+                } else {
+                    c = db.lastProduct();
+                    if (c!=null && c.moveToFirst())
+                        temp = c.getString(0);
+                }
+                textGroup.setText(temp);
+                db.close();
+            }
             validateAdapter.validateEditText(activity, textGroup);
+        }
 
-        if (view == textName && !b)
+        if (view == textName && !b) {
+
+            if (textName.getText().toString().trim().length() == 0 && addOrEdit) {
+                db.open();
+                Cursor c=db.getProduct(selectedProductID);
+
+                if (c != null && c.moveToFirst()) {
+                    textName.setText(c.getString(0));
+                }
+                db.close();
+            }
             validateAdapter.validateEditText(activity, textName);
+        }
 
-        if (view == textMaker && !b)
+        if (view == textMaker && !b) {
+
+            if (textMaker.getText().toString().trim().length() == 0) {
+                Cursor c;
+                String temp = null;
+                db.open();
+                if (addOrEdit) {
+                    c = db.getProduct(selectedProductID);
+                    if (c != null && c.moveToFirst())
+                        temp = c.getString(4);
+                } else {
+                    c = db.lastProduct();
+                    if (c!=null && c.moveToFirst())
+                        temp = c.getString(1);
+                }
+                textMaker.setText(temp);
+                db.close();
+            }
             validateAdapter.validateEditText(activity, textMaker);
+        }
 
-        if (view == textCod && !b){
+        if (view == textCod && !b) {
+
+            if (textCod.getText().toString().trim().length() == 0) {
+                Cursor c;
+                String temp = null;
+                db.open();
+                if (addOrEdit) {
+                    c = db.getProduct(selectedProductID);
+                    if (c != null && c.moveToFirst())
+                        temp = c.getString(1);
+                } else temp = String.valueOf(db.ProductMaxCod() + 1);
+
+                textCod.setText(temp);
+                db.close();
+            }
+
+
             long longCod;
             cod = textCod.getText().toString();
 
-            if (validateAdapter.validateString(activity, textCod, cod)){
+            if (validateAdapter.validateString(activity, textCod, cod)) {
                 longCod = Long.parseLong(cod);
 
                 if (selectedProductCod != longCod) {
@@ -250,7 +312,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     /**************************************************Add product*********************************/
 
-    public boolean addProduct(){
+    public boolean addProduct() {
         isEdit = false;
         int status = 0;
 
@@ -277,17 +339,17 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         }
         else setFocus(textCod);*/
 
-        if (validateAdapter.validateString(activity, textMaker, maker)){
+        if (validateAdapter.validateString(activity, textMaker, maker)) {
             status++;
         }
         else setFocus(textMaker);
 
-        if (validateAdapter.validateString(activity, textName, name)){
+        if (validateAdapter.validateString(activity, textName, name)) {
             status++;
         }
         else setFocus(textName);
 
-        if (validateAdapter.validateString(activity, textGroup, groups)){
+        if (validateAdapter.validateString(activity, textGroup, groups)) {
             status++;
         }
         else setFocus(textGroup);
@@ -295,13 +357,13 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if ( status == 4 ) {
 
 
-            /*db.open();
+            db.open();
             for (int i = 0 ; i<20 ; i++){
-            groups = getRandomString(10);
-            maker = getRandomString(10);
-            name = getRandomString(10);
-            tip = getRandomString(10);
-            longCod++;*/
+            groups = getRandomString(5);
+            maker = getRandomString(5);
+            name = getRandomString(4);
+            tip = getRandomString(5);
+            longCod++;
 
 
 
@@ -313,7 +375,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 groupsID = db.insertProductsGroup(groups);
             }
 
-            if (makerID < 0 ){
+            if (makerID < 0 ) {
                 long makerCod = db.MaxCod();
                 makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true, 0);
             }
@@ -323,10 +385,11 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             db.plusMaker(makerID);
             db.plusGroup(groupsID);
             db.close();
-            //}
-            //db.close();
+            }
+            long id = 0;
+            db.close();
 
-            if (id > 0){
+            if (id > 0) {
                 Toast.makeText(activity, name + ' ' + getString(R.string.registred), Toast.LENGTH_SHORT).show();
                 productsActivity.setSelectedProductID(id);
                 resetAllValidate();
@@ -359,7 +422,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         maker = textMaker.getText().toString();
         long longCod = 0;
 
-        if (validateAdapter.validateString(activity, textCod, cod)){
+        if (validateAdapter.validateString(activity, textCod, cod)) {
             longCod = Long.parseLong(cod);
             db.open();
 
@@ -376,17 +439,17 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         }
         else setFocus(textCod);
 
-        if (validateAdapter.validateString(activity, textMaker, maker)){
+        if (validateAdapter.validateString(activity, textMaker, maker)) {
             status++;
         }
         else setFocus(textMaker);
 
-        if (validateAdapter.validateString(activity, textName, name)){
+        if (validateAdapter.validateString(activity, textName, name)) {
             status++;
         }
         else setFocus(textName);
 
-        if (validateAdapter.validateString(activity, textGroup, groups)){
+        if (validateAdapter.validateString(activity, textGroup, groups)) {
             status++;
         }
         else setFocus(textGroup);
@@ -403,7 +466,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
             if (makerID < 0 ){
                 long makerCod = db.MaxCod();
-                makerID = db.insertAc( 1, makerCod+1 , maker, "", "", "", false, "", true, 0);
+                makerID = db.insertAc( 1, makerCod + 1 , maker, "", "", "", false, "", true, 0);
             }
 
             long gID1 = 0;
@@ -523,7 +586,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textMaker.setOnCreateContextMenuListener(this);
         textMaker.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3){
-                TextView textViewName = (TextView)v.findViewById(R.id.username);
+                TextView textViewName = (TextView)v.findViewById(R.id.name);
                 String name;
                 name = textViewName.getText().toString();
                 textMaker.setText(name);
@@ -546,7 +609,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textGroup.setOnCreateContextMenuListener(this);
         textGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                TextView textViewName = (TextView) v.findViewById(R.id.username);
+                TextView textViewName = (TextView) v.findViewById(R.id.name);
                 String name;
                 name = textViewName.getText().toString();
                 textGroup.setText(name);
@@ -569,7 +632,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         textName.setOnCreateContextMenuListener(this);
         textName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                TextView textViewName = (TextView) v.findViewById(R.id.username);
+                TextView textViewName = (TextView) v.findViewById(R.id.name);
                 String name;
                 name = textViewName.getText().toString();
                 textName.setText(name);
@@ -639,6 +702,10 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         for(int i=0;i<sizeOfRandomString;++i)
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
+    }
+
+    public void setAddOrEdit(boolean s) {
+        addOrEdit = s;
     }
 }
 
