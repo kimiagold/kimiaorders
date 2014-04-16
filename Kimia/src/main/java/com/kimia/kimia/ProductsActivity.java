@@ -1,18 +1,19 @@
 package com.kimia.kimia;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +21,6 @@ public class ProductsActivity extends ActionbarAdapter {
 
     private ProductViewFragment productViewFragment;
     private ProductsListFragment productsListFragment;
-   // private TextView textSelectedProductID;
     private long selectedProductID = 0;
     private Activity activity;
     private int addOrEdit = 1;
@@ -35,8 +35,15 @@ public class ProductsActivity extends ActionbarAdapter {
         activity = this;
         productViewFragment = (ProductViewFragment) getFragmentManager().findFragmentById(R.id.ProductsViewFragment);
         productsListFragment = (ProductsListFragment) getFragmentManager().findFragmentById(R.id.ProductsListFragment);
-      //  textSelectedProductID = (TextView) findViewById(R.id.SelectedProductID);
         db = new DBAdapter(this);
+
+        ActionBar actionBar = getActionBar();
+
+       // ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         /*
         ProductViewFragment fragment1 = new ProductViewFragment();
         getFragmentManager().beginTransaction().add(R.id.ProductsViewFragment, fragment1).commit();
@@ -87,14 +94,13 @@ public class ProductsActivity extends ActionbarAdapter {
         }
 
         productViewFragment.checkFirsItem();
-        productsListFragment.showList();
+        if (searchState) {
+            productsListFragment.showList(true, search);
+        } else
+            productsListFragment.showList(false, "");
+
         productsListFragment.setScroll(scroll);
 
-        /*try {
-            selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
-        } catch (Exception e) {
-            selectedProductID = 0;
-        }*/
         state = 0;
 
         if (selectedProductID > 0) {
@@ -159,7 +165,6 @@ public class ProductsActivity extends ActionbarAdapter {
                         Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
 
                     db.close();
-
                     deleteDialog.dismiss();
                 }
             });
@@ -225,6 +230,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
+        outState.putBundle("search", getRotate());
         outState.putInt("state", state);
         //selectedProductID = Integer.parseInt(textSelectedProductID.getText().toString());
         outState.putLong("selectedProductID", selectedProductID);
@@ -236,7 +242,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
         super.onRestoreInstanceState(savedInstanceState);
         selectedProductID = savedInstanceState.getLong("selectedProductID", 0);
-        //textSelectedProductID.setText(String.valueOf(selectedProductID));
+        setRotate(savedInstanceState.getBundle("search"));
         state = savedInstanceState.getInt("state", 0);
 
         switch (state) {
@@ -245,13 +251,13 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case 1:
-                productsListFragment.showList();
+                productsListFragment.showList(false, "");
                 productsListFragment.setScroll(true);
                 setAdd(false);
                 break;
 
             case 2:
-                productsListFragment.showList();
+                productsListFragment.showList(false, "");
                 productsListFragment.setScroll(true);
                 setEdit(false);
                 break;
@@ -259,11 +265,13 @@ public class ProductsActivity extends ActionbarAdapter {
             case 3:
                 deleteProduct();
                 break;
+
+            default:
+                break;
         }
 
         productViewFragment.setState(savedInstanceState.getBundle("viewFragment"));
     }
-
 
     @Override
     public void onBackPressed() {

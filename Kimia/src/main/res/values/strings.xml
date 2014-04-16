@@ -39,6 +39,7 @@
     <string name="is_empty">is empty!</string>
     <string name="Deleted_Q">Deleted?</string>
     <string name="Edited">edited</string>
+    <string name="search_hint">hint</string>
 
 
 </resources>

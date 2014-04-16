@@ -52,13 +52,23 @@
 
         <activity
             android:name=".ProductsActivity"
-            android:label="@string/Products" >
+            android:label="@string/Products"
+            android:parentActivityName="com.kimia.kimia.MainActivity" >
 
             <intent-filter>
                 <action android:name="com.kimia.kimia.ProductsActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
 
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
 
         <activity
@@ -70,33 +80,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-
-
-        <!--   <activity
-                   android:name=".UserActivity"
-                   android:label="User" >
-               <intent-filter>
-                   <action android:name="com.kimia.kimia.UserActivity" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-               </intent-filter>
-           </activity>
-
-           <activity
-                   android:name=".UsershowActivity"
-                   android:label="User" >
-               <intent-filter>
-                   <action android:name="com.kimia.kimia.UsershowActivity" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-               </intent-filter>
-           </activity>
-           -->
-
-        <!--
-     -->
-
     </application>
 
 </manifest>

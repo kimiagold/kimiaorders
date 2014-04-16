@@ -371,7 +371,7 @@ public class DBAdapter {
     /************************************************Get All Products Name*************************/
 
     public Cursor getAllProductName(){
-       // cursor = db.query(Products, new String[]{ProductID, ProductName, P}, null, null, null, null , ProductName);
+        // cursor = db.query(Products, new String[]{ProductID, ProductName, P}, null, null, null, null , ProductName);
 
         cursor = db.rawQuery("SELECT "
                 + ProductID + ", "
@@ -380,6 +380,24 @@ public class DBAdapter {
                 + " FROM " + Products
                 + " LEFT OUTER JOIN " + ProductGroups
                 + " ON " + Products + "." + ProductGroupsID + " = " + ProductGroups + "." + ProductGroupID
+                + " ORDER BY " + ProductName, null);
+
+        return cursor;
+    }
+
+    /************************************************Get Search Products Name*************************/
+
+    public Cursor getSearchProductName(String filter){
+        // cursor = db.query(Products, new String[]{ProductID, ProductName, P}, null, null, null, null , ProductName);
+
+        cursor = db.rawQuery("SELECT "
+                + ProductID + ", "
+                + ProductName + ", "
+                + ProductGroupName
+                + " FROM " + Products
+                + " LEFT OUTER JOIN " + ProductGroups
+                + " ON " + Products + "." + ProductGroupsID + " = " + ProductGroups + "." + ProductGroupID
+                + " WHERE " + ProductName + " LIKE '" + filter + "%'"
                 + " ORDER BY " + ProductName, null);
 
         return cursor;

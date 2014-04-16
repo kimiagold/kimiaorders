@@ -690,11 +690,14 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 editText.setSelection(start, end);
             } catch (Exception e) {
                 View view = activity.findViewById(viewId);
-                view.requestFocus();
+                if (view != null)
+                    view.requestFocus();
             }
         }
         savedState = null;
     }
+
+    /********************************************************************random********************/
 
     private static String getRandomString(final int sizeOfRandomString){
         final Random random=new Random();

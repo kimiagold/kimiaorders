@@ -114,7 +114,11 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
 
     @Override
     public int getPositionForSection(int section) {
-        return alphaIndexer.get(sections[section]);
+        try {
+            return alphaIndexer.get(sections[section]);
+        } catch (Exception e) {
+            return 1;
+        }
     }
 
     @Override
