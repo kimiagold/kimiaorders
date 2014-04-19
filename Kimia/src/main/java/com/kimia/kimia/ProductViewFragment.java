@@ -44,10 +44,10 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     private String cod;
     private long groupsID;
     private long makerID;
-    private Cursor cursor;
+    //private Cursor cursor;
     //private ListAdapter listAdapter;
     //private Context context;
-    private DBAdapter db;
+    //private DBAdapter db;
     //private boolean visible;
     private Activity activity;
 
@@ -93,7 +93,6 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             textTip = (EditText) activity.findViewById(R.id.ProductEditTip);
             //textSelectedProductID = (TextView) activity.findViewById(R.id.SelectedProductID);
 
-            db = new DBAdapter(activity);
             //context = activity;
 
             validateAdapter = new ValidateAdapter();
@@ -203,6 +202,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             if (textGroup.getText().toString().trim().length() == 0) {
                 Cursor c;
                 String temp = null;
+                DBAdapter db;
+                db = new DBAdapter(activity);
                 db.open();
                 if (addOrEdit) {
                     c = db.getProduct(selectedProductID);
@@ -222,6 +223,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if (view == textName && !b) {
 
             if (textName.getText().toString().trim().length() == 0 && addOrEdit) {
+                DBAdapter db;
+                db = new DBAdapter(activity);
                 db.open();
                 Cursor c=db.getProduct(selectedProductID);
 
@@ -238,6 +241,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             if (textMaker.getText().toString().trim().length() == 0) {
                 Cursor c;
                 String temp = null;
+                DBAdapter db;
+                db = new DBAdapter(activity);
                 db.open();
                 if (addOrEdit) {
                     c = db.getProduct(selectedProductID);
@@ -259,6 +264,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             if (textCod.getText().toString().trim().length() == 0) {
                 Cursor c;
                 String temp = null;
+                DBAdapter db;
+                db = new DBAdapter(activity);
                 db.open();
                 if (addOrEdit) {
                     c = db.getProduct(selectedProductID);
@@ -278,6 +285,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 longCod = Long.parseLong(cod);
 
                 if (selectedProductCod != longCod) {
+                    DBAdapter db;
+                    db = new DBAdapter(activity);
                     db.open();
                     if (!db.checkProductCod(longCod))
                         validateAdapter.setDuplicate(activity, textCod);
@@ -295,6 +304,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         resetAllValidate();
         selectedProductID = productsActivity.getSelectedProductID();
 
+        DBAdapter db;
+        db = new DBAdapter(activity);
         db.open();
         Cursor c=db.getProduct(selectedProductID);
 
@@ -354,7 +365,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         }
         else setFocus(textGroup);
 
-        if ( status == 4 ) {
+      /*  if ( status == 4 ) {
 
 
             db.open();
@@ -364,9 +375,11 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             name = getRandomString(4);
             tip = getRandomString(5);
             longCod++;
+*/
 
 
-
+        DBAdapter db;
+        db = new DBAdapter(activity);
             db.open();
             groupsID = db.getProductsGroupID(groups);
             makerID = db.getAccountsNameID(maker);
@@ -385,9 +398,9 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
             db.plusMaker(makerID);
             db.plusGroup(groupsID);
             db.close();
-            }
-            long id = 0;
-            db.close();
+            //}
+            //long id = 0;
+            //db.close();
 
             if (id > 0) {
                 Toast.makeText(activity, name + ' ' + getString(R.string.registred), Toast.LENGTH_SHORT).show();
@@ -404,7 +417,7 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
                 setFocus(textName);
                  return false;
             }
-        }
+     //   }
 
         return false;
     }
@@ -424,6 +437,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
         if (validateAdapter.validateString(activity, textCod, cod)) {
             longCod = Long.parseLong(cod);
+            DBAdapter db;
+            db = new DBAdapter(activity);
             db.open();
 
             if (selectedProductCod != longCod) {
@@ -456,6 +471,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
 
         if ( status == 4 ) {
+            DBAdapter db;
+            db = new DBAdapter(activity);
             db.open();
             groupsID = db.getProductsGroupID(groups);
             makerID = db.getAccountsNameID(maker);
@@ -525,17 +542,20 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
 
     public void resetForAdd(boolean edit) {
         onFocusForEdit = false;
+        isEdit = false;
 
         if (edit) {
 
             textName.setText("");
             textTip.setText("");
 
+            DBAdapter db;
+            db = new DBAdapter(activity);
             db.open();
 
             long max=  db.ProductMaxCod();
             textCod.setText(Long.toString(max + 1));
-
+            Cursor cursor;
             cursor = db.lastProduct();
 
             if (cursor!=null && cursor.moveToFirst()) {
@@ -575,9 +595,12 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Show Accounts List*****8********************/
 
     private void showMakersList() {
+        DBAdapter db;
+        db = new DBAdapter(activity);
         db.open();
         super.onResume();
         String filter;
+        Cursor cursor;
         filter = textMaker.getText().toString();
         cursor = db.filterAccounts(filter);
         cursor.moveToFirst();
@@ -598,10 +621,13 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /**************************************************Show Products Group List********************/
 
     private void showProductsGroupList() {
+        DBAdapter db;
+        db = new DBAdapter(activity);
         db.open();
         super.onResume();
         String filter;
         filter = textGroup.getText().toString();
+        Cursor cursor;
         cursor = db.filterProductsGroup(filter);
         cursor.moveToFirst();
         textGroup.setAdapter(new AutoCompleteAdapter(activity, cursor , false));
@@ -621,10 +647,13 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
     /*************************************************Show Name List*******************************/
 
     private void showNameList() {
+        DBAdapter db;
+        db = new DBAdapter(activity);
         db.open();
         super.onResume();
         String filter;
         filter = textName.getText().toString();
+        Cursor cursor;
         cursor = db.filterProductsName(filter);
         cursor.moveToFirst();
         textName.setAdapter(new AutoCompleteAdapter(activity, cursor , false));

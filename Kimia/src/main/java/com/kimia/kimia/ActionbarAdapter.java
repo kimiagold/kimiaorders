@@ -8,9 +8,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 
-public class ActionbarAdapter extends Activity{
+public class ActionbarAdapter extends Activity implements android.view.View.OnLayoutChangeListener, SearchView.OnQueryTextListener,android.widget.SearchView.OnCloseListener{
 
     private MenuItem itemAdd;
     private MenuItem itemEdit;
@@ -53,22 +54,27 @@ public class ActionbarAdapter extends Activity{
                 searchView.setIconified(false);
                 searchView.requestFocusFromTouch();
                 //productsListFragment.showList(true, search);
+
+                itemSearch.collapseActionView();
             }
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
 
+
+
+
         SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
-                search = newText;
-                productsListFragment.showList(true, newText);
                 searchState = true;
+                search = newText.trim();
+                productsListFragment.showList(true, search);
                 return true;
             }
 
             public boolean onQueryTextSubmit(String query) {
-                search = query;
-                productsListFragment.showList(true, search);
                 searchState = true;
+                search = query.trim();
+                productsListFragment.showList(true, search);
                 return true;
             }
         };
@@ -115,6 +121,42 @@ public class ActionbarAdapter extends Activity{
             itemCancel.setVisible(false);
             return true;
         }
+        return false;
+    }
+
+    public boolean actionbarSetView1() {
+        stateEdit = false;
+        if (itemAccept!=null) {
+            itemAdd.setVisible(true);
+            itemEdit.setVisible(false);
+            itemDelete.setVisible(false);
+            itemSearch.setVisible(true);
+            itemAccept.setVisible(false);
+            itemCancel.setVisible(false);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public boolean onClose() {
+        finish();
+        return false;
+    }
+
+    @Override
+    public void onLayoutChange(View view, int i, int i2, int i3, int i4,
+                               int i5, int i6, int i7, int i8) {
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
         return false;
     }
 }

@@ -68,7 +68,7 @@ public class ProductsActivity extends ActionbarAdapter {
             weight = 7;
         else weight = 5;
 
-        LinearLayout layout= (LinearLayout) findViewById(R.id.ProductsList);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.ProductsList);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, weight);
         layout.setLayoutParams(params);
@@ -84,20 +84,24 @@ public class ProductsActivity extends ActionbarAdapter {
         productViewFragment.setAddOrEdit(true);
     }
 
-    public void setView (boolean scroll) {
+    public void setView (boolean scroll, boolean b) {
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         View v=getCurrentFocus();
 
-        if (v != null) {
-            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            v.clearFocus();
-        }
+
 
         productViewFragment.checkFirsItem();
         if (searchState) {
-            productsListFragment.showList(true, search);
-        } else
+            if (b) {
+                productsListFragment.showList(true, search);
+            }
+        } else {
             productsListFragment.showList(false, "");
+            if (v != null) {
+                inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                v.clearFocus();
+            }
+        }
 
         productsListFragment.setScroll(scroll);
 
@@ -159,13 +163,14 @@ public class ProductsActivity extends ActionbarAdapter {
                         db.minusGroup(finalGroupID);
                         db.minusMaker(finalMakerID);
                         productsListFragment.setNextItem();
-                        setView(false);
+                        setView(false, true);
                     }
                     else
                         Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
 
                     db.close();
                     deleteDialog.dismiss();
+                    state = 0;
                 }
             });
 
@@ -173,6 +178,7 @@ public class ProductsActivity extends ActionbarAdapter {
                 @Override
                 public void onClick(View v) {
                     deleteDialog.dismiss();
+                    state = 0;
                 }
             });
         }
@@ -186,14 +192,18 @@ public class ProductsActivity extends ActionbarAdapter {
         switch (Item.getItemId()) {
 
             case R.id.ItemAdd:
+                searchState = false;
+                setViewFragmentVisible(true);
                 setAdd(false);
                 break;
 
             case R.id.ItemEdit:
+                searchState = false;
                 setEdit(true);
                 break;
 
             case R.id.ItemDelete:
+                searchState = false;
                 deleteProduct();
                 break;
 
@@ -202,13 +212,13 @@ public class ProductsActivity extends ActionbarAdapter {
                 switch (addOrEdit) {
                     case 1:
                         if (productViewFragment.addProduct()){
-                            setView(true);
+                            setView(true, true);
                         }
                         break;
 
                     case 2:
                         if (productViewFragment.editProduct()){
-                            setView(true);
+                            setView(true, true);
                         }
                         break;
                 }
@@ -218,7 +228,7 @@ public class ProductsActivity extends ActionbarAdapter {
             case R.id.ItemCancel:
                 if (selectedProductID == 0)
                     finish();
-                else setView(true);
+                else setView(true, true);
                 break;
 
             default:
@@ -247,7 +257,7 @@ public class ProductsActivity extends ActionbarAdapter {
 
         switch (state) {
             case 0:
-                setView(true);
+                setView(true, true);
                 break;
 
             case 1:
@@ -277,6 +287,18 @@ public class ProductsActivity extends ActionbarAdapter {
     public void onBackPressed() {
         if (state == 0)
             finish();
-        else setView(true);
+        else setView(true, true);
+    }
+
+    public void setViewFragmentVisible(boolean b) {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.ProductsView);
+        if (b) {
+            actionbarSetView();
+            layout.setVisibility(View.VISIBLE);
+        }
+        else {
+            actionbarSetView1();
+            layout.setVisibility(View.INVISIBLE);//GONE  INVISIBLE
+        }
     }
 }

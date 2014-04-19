@@ -22,9 +22,9 @@ public class ListAdapter extends BaseAdapter implements SectionIndexer {
     TextView textViewId;
     private int selectedItem;
     boolean group;
-    Context ctx;
-    HashMap<String,Integer> alphaIndexer;
-    String[] sections;
+    private Context ctx;
+    private HashMap<String,Integer> alphaIndexer;
+    private String[] sections;
 
     public ListAdapter(Context context, Cursor cur, boolean showGroup) {
         cursor = cur;

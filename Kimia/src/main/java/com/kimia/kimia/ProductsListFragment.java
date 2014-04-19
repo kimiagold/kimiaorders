@@ -24,7 +24,7 @@ public class ProductsListFragment extends Fragment {
     Context context;
     private ArrayList<Long> itemID;
     DBAdapter db;
-    int i=0;
+    private boolean selectSearch = true;
     private int firstScroll;
     private int itemPosition;
     private ProductsActivity productsActivity;
@@ -47,7 +47,7 @@ public class ProductsListFragment extends Fragment {
         super.onResume();
         cursor = db.getAllProductName();
 
-        if(cursor != null && cursor.moveToFirst()){
+        if(cursor != null && cursor.moveToFirst()) {
             productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
         } else {
             productsActivity.setSelectedProductID(0);
@@ -63,8 +63,20 @@ public class ProductsListFragment extends Fragment {
         super.onResume();
         db.open();
 
-        if (search)
+        if (search) {
             cursor = db.getSearchProductName(filter);
+
+            if(cursor != null && cursor.moveToFirst()) {
+                if (selectSearch) {
+                    productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
+                }
+
+                productsActivity.setView(false, false);
+                productsActivity.setViewFragmentVisible(true);
+            } else {
+                productsActivity.setViewFragmentVisible(false);
+            }
+        }
         else cursor = db.getAllProductName();
 
         itemID = new ArrayList<Long>();
@@ -85,16 +97,16 @@ public class ProductsListFragment extends Fragment {
         listView.setOnCreateContextMenuListener(this);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3){
+            public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3) {
+                selectSearch = false;
                 TextView textViewId=(TextView)v.findViewById(R.id.id);
                 String ID;
-                ID=textViewId.getText().toString();
+                ID = textViewId.getText().toString();
                 productsActivity.setSelectedProductID(Long.parseLong(ID));
                 setSelect(position);
                 firstScroll = listView.getFirstVisiblePosition();
                 c = listView.getChildAt(1);
-                productsActivity.setView(false);
+                productsActivity.setView(false, true);
             }
         });
     }
