@@ -1,6 +1,5 @@
 package com.kimia.kimia;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,13 +7,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 public class ProductsListFragment extends Fragment {
 
@@ -24,19 +20,21 @@ public class ProductsListFragment extends Fragment {
     Context context;
     private ArrayList<Long> itemID;
     DBAdapter db;
-    private boolean selectSearch = true;
+    public boolean selectSearch = true;
     private int firstScroll;
     private int itemPosition;
     private ProductsActivity productsActivity;
+    boolean search;
+    String filter;
     View c;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_product_list,container,false);
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         db = new DBAdapter(getActivity());
         context = getActivity();
@@ -59,8 +57,10 @@ public class ProductsListFragment extends Fragment {
         //productsActivity.setView(false);
     }
 
-    public void showList(boolean search, String filter) {
+    public void showList(boolean sea, String fil) {
         super.onResume();
+        filter = fil;
+        search = sea;
         db.open();
 
         if (search) {
@@ -69,9 +69,11 @@ public class ProductsListFragment extends Fragment {
             if(cursor != null && cursor.moveToFirst()) {
                 if (selectSearch) {
                     productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
+                //    selectSearch = false;
                 }
+                selectSearch = true;
 
-                productsActivity.setView(false, false);
+                productsActivity.setSearch(false, true, false);
                 productsActivity.setViewFragmentVisible(true);
             } else {
                 productsActivity.setViewFragmentVisible(false);
@@ -96,7 +98,7 @@ public class ProductsListFragment extends Fragment {
 
         listView.setOnCreateContextMenuListener(this);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View v,int position, long arg3) {
                 selectSearch = false;
                 TextView textViewId=(TextView)v.findViewById(R.id.id);
@@ -106,12 +108,14 @@ public class ProductsListFragment extends Fragment {
                 setSelect(position);
                 firstScroll = listView.getFirstVisiblePosition();
                 c = listView.getChildAt(1);
-                productsActivity.setView(false, true);
+                productsActivity.setViewORSearch(false, true);
+                productsActivity.clearFocus();
             }
         });
     }
 
-    public void setNextItem(){
+    public void setNextItem() {
+
         if (itemPosition == itemID.size()-1)
             itemPosition--;
 
@@ -121,7 +125,11 @@ public class ProductsListFragment extends Fragment {
         else itemPosition = 0;
 
         db.open();
-        cursor = db.getAllProductName();
+        if (search) {
+            cursor = db.getSearchProductName(filter);
+        }
+        else cursor = db.getAllProductName();
+
         if (cursor.moveToPosition(itemPosition))
             productsActivity.setSelectedProductID(Long.parseLong(cursor.getString(0)));
         else {

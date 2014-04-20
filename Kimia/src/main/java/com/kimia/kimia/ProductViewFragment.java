@@ -312,7 +312,8 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         if (c != null && c.moveToFirst()) {
             selectedProductCod = Long.parseLong(c.getString(1));
             textGroup.setText(c.getString(5));
-            textName.setText(c.getString(0));
+            String s = c.getString(0);
+            textName.setText(s);
             textMaker.setText(c.getString(4));
             textCod.setText(c.getString(1));
             textTip.setText(c.getString(2));
@@ -740,4 +741,3 @@ public class ProductViewFragment extends Fragment implements View.OnFocusChangeL
         addOrEdit = s;
     }
 }
-

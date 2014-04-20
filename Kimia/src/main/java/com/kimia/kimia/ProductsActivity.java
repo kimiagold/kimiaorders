@@ -3,9 +3,7 @@ package com.kimia.kimia;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,27 +81,20 @@ public class ProductsActivity extends ActionbarAdapter {
         productViewFragment.setAddOrEdit(true);
     }
 
-    public void setView (boolean scroll, boolean b) {
+    public void clearFocus(){
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         View v=getCurrentFocus();
-
-
-
-        productViewFragment.checkFirsItem();
-        if (searchState) {
-            if (b) {
-                productsListFragment.showList(true, search);
-            }
-        } else {
-            productsListFragment.showList(false, "");
-            if (v != null) {
-                inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                v.clearFocus();
-            }
+        if (v != null) {
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            v.clearFocus();
         }
+    }
 
+    public void setView (boolean scroll) {
+        productViewFragment.checkFirsItem();
+        productsListFragment.showList(false, "");
+        clearFocus();
         productsListFragment.setScroll(scroll);
-
         state = 0;
 
         if (selectedProductID > 0) {
@@ -114,6 +104,26 @@ public class ProductsActivity extends ActionbarAdapter {
         } else {
             setAdd(true);
         }
+    }
+
+    public void setViewORSearch(boolean scroll, boolean clearFocus){
+        if (searchState) {
+            setSearch(scroll, false, clearFocus);
+        }
+        else setView(scroll);
+    }
+
+    public void setSearch (boolean scroll, boolean view, boolean clearFocus) {
+        if (view) {
+            productViewFragment.checkFirsItem();
+        } else
+            productsListFragment.showList(true, search);
+
+        if (clearFocus) clearFocus();
+
+        setFragmentWeightEdit(false);
+        actionbarSetView();
+        productsListFragment.setScroll(scroll);
     }
 
     public void setAdd(boolean firstItem) {
@@ -163,7 +173,7 @@ public class ProductsActivity extends ActionbarAdapter {
                         db.minusGroup(finalGroupID);
                         db.minusMaker(finalMakerID);
                         productsListFragment.setNextItem();
-                        setView(false, true);
+                        setViewORSearch(false, true);
                     }
                     else
                         Toast.makeText(activity, getString(R.string.error),Toast.LENGTH_SHORT).show();
@@ -192,33 +202,38 @@ public class ProductsActivity extends ActionbarAdapter {
         switch (Item.getItemId()) {
 
             case R.id.ItemAdd:
+                resetSearch();
                 searchState = false;
                 setViewFragmentVisible(true);
                 setAdd(false);
                 break;
 
             case R.id.ItemEdit:
-                searchState = false;
+                //searchState = false;
+                productsListFragment.selectSearch = false;
                 setEdit(true);
                 break;
 
             case R.id.ItemDelete:
-                searchState = false;
+                //searchState = false;
+                productsListFragment.selectSearch = false;
                 deleteProduct();
                 break;
 
             case R.id.ItemAccept:
+                //searchState = false;
+                productsListFragment.selectSearch = false;
 
                 switch (addOrEdit) {
                     case 1:
                         if (productViewFragment.addProduct()){
-                            setView(true, true);
+                            setViewORSearch(true, true);
                         }
                         break;
 
                     case 2:
                         if (productViewFragment.editProduct()){
-                            setView(true, true);
+                            setViewORSearch(true, true);
                         }
                         break;
                 }
@@ -226,9 +241,11 @@ public class ProductsActivity extends ActionbarAdapter {
                 break;
 
             case R.id.ItemCancel:
+                //searchState = false;
+                productsListFragment.selectSearch = false;
                 if (selectedProductID == 0)
                     finish();
-                else setView(true, true);
+                else setViewORSearch(true, true);
                 break;
 
             default:
@@ -252,12 +269,13 @@ public class ProductsActivity extends ActionbarAdapter {
 
         super.onRestoreInstanceState(savedInstanceState);
         selectedProductID = savedInstanceState.getLong("selectedProductID", 0);
-        setRotate(savedInstanceState.getBundle("search"));
         state = savedInstanceState.getInt("state", 0);
+        setRotate(savedInstanceState.getBundle("search"));
+        productsListFragment.selectSearch = false;
 
         switch (state) {
             case 0:
-                setView(true, true);
+                setViewORSearch(true, true);
                 break;
 
             case 1:
@@ -287,7 +305,7 @@ public class ProductsActivity extends ActionbarAdapter {
     public void onBackPressed() {
         if (state == 0)
             finish();
-        else setView(true, true);
+        else setViewORSearch(true, true);
     }
 
     public void setViewFragmentVisible(boolean b) {

@@ -1,6 +1,5 @@
 package com.kimia.kimia;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -60,9 +59,6 @@ public class ActionbarAdapter extends Activity implements android.view.View.OnLa
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
 
-
-
-
         SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
             public boolean onQueryTextChange(String newText) {
                 searchState = true;
@@ -82,6 +78,13 @@ public class ActionbarAdapter extends Activity implements android.view.View.OnLa
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onCreateOptionsMenu(menu);
     //    return true;
+    }
+
+    public void resetSearch() {
+
+        searchView.setQuery("", false);
+        searchView.setFocusable(false);
+        searchView.setIconified(true);
     }
 
     public void setRotate(Bundle state) {
@@ -146,8 +149,8 @@ public class ActionbarAdapter extends Activity implements android.view.View.OnLa
     }
 
     @Override
-    public void onLayoutChange(View view, int i, int i2, int i3, int i4,
-                               int i5, int i6, int i7, int i8) {
+    public void onLayoutChange(View view, int i, int i2, int i3,
+                               int i4, int i5, int i6, int i7, int i8) {
     }
 
     @Override
